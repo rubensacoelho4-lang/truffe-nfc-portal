@@ -10,52 +10,232 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --forest: #0F3327;
+      --forest-mid: #4A6B5E;
+      --forest-light: #8FA99D;
+      --terracotta: #C97D59;
+      --cream: #F2E9E2;
+      --sand-dark: #E5D9CC;
+      --white: #FFFFFF;
+      --error: #D94F4F;
+      --error-light: #FDEAEA;
+      --success: #3A8C5C;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F2E9E2; color: #0F3327; min-height: 100vh; -webkit-font-smoothing: antialiased; }
-    .container { max-width: 420px; margin: 0 auto; padding: 0 0 40px; }
-    .hero { width: 100%; height: 280px; background: #E5D9CC; position: relative; overflow: hidden; }
+    body {
+      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--cream); color: var(--forest);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 440px; margin: 0 auto; padding: 0 0 32px; }
+
+    /* ─── Hero ─── */
+    .hero {
+      width: 100%; height: 320px; background: var(--sand-dark);
+      position: relative; overflow: hidden;
+    }
     .hero img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 80px; background: linear-gradient(135deg, #E5D9CC 0%, #F2E9E2 100%); }
-    .lost-banner { background: #D94F4F; color: #FFF; padding: 12px 16px; text-align: center; font-weight: 700; font-size: 15px; letter-spacing: 1px; animation: pulse-lost 2s infinite; }
+    .hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 140px;
+      background: linear-gradient(to top, rgba(15,51,39,0.55), transparent);
+      pointer-events: none;
+    }
+    .hero-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 90px;
+      background: linear-gradient(145deg, var(--forest) 0%, #1A4A3A 100%);
+    }
+    .hero-name-overlay {
+      position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 2;
+    }
+    .hero-name-overlay .name {
+      font-size: 32px; font-weight: 700; color: var(--white);
+      line-height: 1.15; letter-spacing: -0.3px;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.2);
+    }
+    .hero-name-overlay .meta {
+      font-size: 14px; color: rgba(255,255,255,0.8);
+      margin-top: 4px; font-weight: 500;
+    }
+
+    /* ─── Lost banner ─── */
+    .lost-banner {
+      background: var(--error); color: var(--white);
+      padding: 14px 20px; text-align: center;
+      font-weight: 700; font-size: 14px; letter-spacing: 0.8px;
+      animation: pulse-lost 2s infinite;
+    }
     @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.85; } }
-    .lost-message { background: #FDEAEA; color: #D94F4F; padding: 14px 16px; font-size: 14px; line-height: 1.5; border-left: 4px solid #D94F4F; margin: 0 16px; margin-top: 12px; border-radius: 0 8px 8px 0; }
-    .identity { padding: 20px 16px 0; }
-    .name { font-size: 28px; font-weight: 700; color: #0F3327; line-height: 1.2; }
-    .meta { font-size: 15px; color: #4A6B5E; margin-top: 4px; }
-    .section { background: #FFF; border-radius: 14px; margin: 16px; padding: 16px; box-shadow: 0 1px 4px rgba(15,51,39,0.08); }
-    .section-title { font-size: 13px; font-weight: 600; color: #4A6B5E; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-    .info-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #F2E9E2; }
+    .lost-message {
+      background: var(--error-light); color: var(--error);
+      padding: 14px 18px; font-size: 14px; line-height: 1.6;
+      border-left: 4px solid var(--error);
+      margin: 16px 16px 0; border-radius: 0 14px 14px 0;
+    }
+
+    /* ─── Sections ─── */
+    .section {
+      background: var(--white); border-radius: 20px;
+      margin: 14px 16px; padding: 20px;
+      box-shadow: 0 2px 12px rgba(15,51,39,0.06);
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .section-icon.emergency { background: rgba(201,125,89,0.1); }
+    .section-icon.vet { background: rgba(15,51,39,0.06); }
+    .section-icon.medical { background: rgba(58,140,92,0.1); }
+    .section-icon.qr { background: rgba(143,169,157,0.12); }
+    .section-title {
+      font-size: 14px; font-weight: 700; color: var(--forest);
+      flex: 1;
+    }
+    .info-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 0; border-bottom: 1px solid rgba(15,51,39,0.04);
+    }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: 14px; color: #4A6B5E; }
-    .info-value { font-size: 14px; color: #0F3327; font-weight: 500; text-align: right; }
-    .info-value a { color: #C97D59; text-decoration: none; font-weight: 600; }
-    .vet-btn { display: block; width: 100%; padding: 14px; background: #0F3327; color: #F2E9E2; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; }
-    .vet-form { margin-top: 12px; display: none; }
+    .info-label { font-size: 14px; color: var(--forest-mid); }
+    .info-value { font-size: 14px; color: var(--forest); font-weight: 600; text-align: right; }
+    .info-value a { color: var(--terracotta); text-decoration: none; font-weight: 700; }
+
+    /* ─── Contact card ─── */
+    .contact-card {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(242,233,226,0.5); border-radius: 16px; padding: 16px;
+    }
+    .contact-avatar {
+      width: 48px; height: 48px; border-radius: 24px;
+      background: var(--forest);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0;
+    }
+    .contact-name { font-size: 15px; font-weight: 700; color: var(--forest); }
+    .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
+    .contact-phone a { color: var(--terracotta); text-decoration: none; }
+    .call-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 12px; padding: 13px;
+      background: var(--terracotta); color: var(--white);
+      border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: inherit; width: 100%;
+      text-decoration: none; transition: opacity 0.2s;
+    }
+    .call-btn:hover { opacity: 0.9; }
+
+    /* ─── Vet access ─── */
+    .vet-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px;
+      background: var(--forest); color: var(--cream);
+      border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: opacity 0.2s;
+    }
+    .vet-btn:hover { opacity: 0.9; }
+    .vet-form { margin-top: 14px; display: none; }
     .vet-form.visible { display: block; }
-    .vet-form input { width: 100%; padding: 12px; border: 2px solid #E5D9CC; border-radius: 10px; font-size: 18px; text-align: center; letter-spacing: 8px; color: #0F3327; background: #F2E9E2; outline: none; font-family: inherit; }
-    .vet-form input:focus { border-color: #C97D59; }
-    .vet-submit { display: block; width: 100%; margin-top: 10px; padding: 12px; background: #C97D59; color: #FFF; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
-    .vet-hint { font-size: 12px; color: #8FA99D; margin-top: 8px; text-align: center; }
-    .pin-error { background: #FDEAEA; color: #D94F4F; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; margin-bottom: 12px; font-weight: 500; display: none; }
+    .vet-form input {
+      width: 100%; padding: 14px;
+      border: 2px solid var(--sand-dark); border-radius: 14px;
+      font-size: 22px; text-align: center; letter-spacing: 10px;
+      color: var(--forest); background: var(--cream);
+      outline: none; font-family: inherit; font-weight: 700;
+    }
+    .vet-form input:focus { border-color: var(--terracotta); }
+    .vet-submit {
+      display: block; width: 100%; margin-top: 10px; padding: 14px;
+      background: var(--terracotta); color: var(--white);
+      border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: opacity 0.2s;
+    }
+    .vet-submit:hover { opacity: 0.9; }
+    .vet-hint { font-size: 12px; color: var(--forest-light); margin-top: 10px; text-align: center; }
+    .pin-error {
+      background: var(--error-light); color: var(--error);
+      padding: 12px; border-radius: 12px;
+      font-size: 14px; text-align: center; margin-bottom: 14px;
+      font-weight: 600; display: none;
+    }
     .pin-error.visible { display: block; }
-    .medical-badge { display: inline-block; background: #3A8C5C; color: #FFF; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.5px; margin-left: 8px; vertical-align: middle; }
-    .footer { text-align: center; padding: 24px 16px; font-size: 12px; color: #8FA99D; }
-    .footer a { color: #C97D59; text-decoration: none; font-weight: 600; }
-    .truffe-logo { font-size: 18px; font-weight: 700; color: #0F3327; letter-spacing: 1px; }
-    .not-found { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 40px 20px; text-align: center; }
-    .not-found-emoji { font-size: 64px; margin-bottom: 16px; }
-    .not-found h1 { font-size: 22px; color: #0F3327; margin-bottom: 8px; }
-    .not-found p { font-size: 15px; color: #4A6B5E; max-width: 300px; line-height: 1.5; margin-bottom: 24px; }
-    .not-found a { display: inline-block; padding: 12px 24px; background: #C97D59; color: #FFF; border-radius: 10px; text-decoration: none; font-weight: 600; }
-    .error-view { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 40px 20px; text-align: center; }
-    .error-view p { font-size: 15px; color: #4A6B5E; max-width: 300px; line-height: 1.5; margin-top: 12px; }
-    .error-view button { margin-top: 20px; padding: 12px 24px; background: #C97D59; color: #FFF; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .medical-badge {
+      display: inline-block; background: var(--success); color: var(--white);
+      font-size: 10px; font-weight: 700; padding: 3px 10px;
+      border-radius: 999px; letter-spacing: 0.5px; vertical-align: middle;
+    }
+
+    /* ─── QR ─── */
+    .qr-inner { text-align: center; }
+    .qr-inner canvas { margin: 0 auto 10px; border-radius: 8px; }
+    .qr-hint { font-size: 12px; color: var(--forest-light); }
+
+    /* ─── Footer ─── */
+    .portal-footer {
+      text-align: center; padding: 28px 16px 20px;
+    }
+    .portal-footer-logo {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 22px; font-weight: 700; color: var(--forest);
+      letter-spacing: 0.5px; display: inline-block; position: relative;
+    }
+    .portal-footer-logo .dot {
+      position: absolute; top: 0px; right: -4px;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta);
+    }
+    .portal-footer-sub {
+      font-size: 12px; color: var(--forest-light); margin-top: 4px;
+    }
+    .portal-footer-sub a { color: var(--terracotta); text-decoration: none; font-weight: 600; }
+    .portal-footer-badge {
+      display: inline-block; margin-top: 12px;
+      padding: 6px 16px; border-radius: 20px;
+      background: rgba(15,51,39,0.04);
+      font-size: 11px; font-weight: 600; color: var(--forest-mid);
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── States ─── */
+    .not-found {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
+    }
+    .not-found-emoji { font-size: 64px; margin-bottom: 20px; }
+    .not-found h1 { font-size: 24px; font-weight: 700; color: var(--forest); margin-bottom: 10px; }
+    .not-found p { font-size: 15px; color: var(--forest-mid); max-width: 300px; line-height: 1.6; margin-bottom: 28px; }
+    .not-found a {
+      display: inline-block; padding: 14px 28px;
+      background: var(--terracotta); color: var(--white);
+      border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 15px;
+      transition: opacity 0.2s;
+    }
+    .not-found a:hover { opacity: 0.9; }
+    .error-view {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
+    }
+    .error-view p { font-size: 15px; color: var(--forest-mid); max-width: 300px; line-height: 1.6; margin-top: 14px; }
+    .error-view button {
+      margin-top: 24px; padding: 14px 28px;
+      background: var(--terracotta); color: var(--white);
+      border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
     .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
-    .spinner { width: 40px; height: 40px; border: 3px solid #E5D9CC; border-top-color: #C97D59; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid var(--sand-dark); border-top-color: var(--terracotta);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .qr-section { margin: 16px; padding: 20px; background: #FFF; border-radius: 14px; text-align: center; box-shadow: 0 1px 4px rgba(15,51,39,0.08); }
-    .qr-section canvas { margin: 0 auto; }
-    .qr-section p { font-size: 12px; color: #8FA99D; margin-top: 10px; }
+
     #profile-view, #not-found-view, #loading-view, #error-view { display: none; }
     #loading-view { display: flex; }
   </style>
@@ -63,17 +243,14 @@
 <body>
 <div class="container">
 
-  <!-- Loading -->
   <div id="loading-view" class="loading"><div class="spinner"></div></div>
 
-  <!-- Error -->
   <div id="error-view" class="error-view">
     <div style="font-size: 48px;">&#x26A0;&#xFE0F;</div>
     <p id="error-message">Impossible de charger le profil. V&eacute;rifie ta connexion internet.</p>
     <button onclick="location.reload()">R&eacute;essayer</button>
   </div>
 
-  <!-- Not Found -->
   <div id="not-found-view">
     <div class="not-found">
       <div class="not-found-emoji">&#x1F43E;</div>
@@ -81,54 +258,69 @@
       <p>Ce m&eacute;daillon n'est associ&eacute; &agrave; aucun animal pour le moment.</p>
       <a href="https://truffe.pet">D&eacute;couvrir Truffe</a>
     </div>
-    <div class="footer"><span class="truffe-logo">TRUFFE</span><br>M&eacute;daillons NFC pour animaux</div>
+    <div class="portal-footer">
+      <div class="portal-footer-logo">truffe<span class="dot"></span></div>
+      <div class="portal-footer-sub">M&eacute;daillons NFC pour animaux</div>
+    </div>
   </div>
 
-  <!-- Profile -->
   <div id="profile-view">
-    <div class="hero" id="hero"></div>
-    <div id="lost-banner" class="lost-banner" style="display:none"></div>
-    <div class="identity">
-      <div class="name" id="pet-name"></div>
-      <div class="meta" id="pet-meta"></div>
-    </div>
-    <div id="lost-message" class="lost-message" style="display:none"></div>
-
-    <!-- Emergency -->
-    <div class="section" id="emergency-section" style="display:none">
-      <div class="section-title" id="emergency-title">Contact d'urgence</div>
-      <div id="emergency-rows"></div>
-    </div>
-
-    <!-- Vet access -->
-    <div class="section" id="vet-section" style="display:none">
-      <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
-      <div class="pin-error" id="pin-error">Code PIN incorrect. R&eacute;essayez.</div>
-      <button class="vet-btn" id="vet-btn" onclick="showPinForm()">&#x1FA7A; Acc&egrave;s v&eacute;t&eacute;rinaire</button>
-      <div class="vet-form" id="vet-form">
-        <input type="password" id="pin-input" placeholder="&bull; &bull; &bull; &bull;" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}">
-        <button class="vet-submit" onclick="verifyPin()">V&eacute;rifier le code</button>
-        <div class="vet-hint">Demandez le code au propri&eacute;taire de l'animal</div>
+    <div class="hero" id="hero">
+      <div class="hero-name-overlay">
+        <div class="name" id="pet-name"></div>
+        <div class="meta" id="pet-meta"></div>
       </div>
     </div>
 
-    <!-- Medical data (after PIN) -->
+    <div id="lost-banner" class="lost-banner" style="display:none"></div>
+    <div id="lost-message" class="lost-message" style="display:none"></div>
+
+    <div class="section" id="emergency-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon emergency">&#x1F4DE;</div>
+        <div class="section-title" id="emergency-title">Contact d'urgence</div>
+      </div>
+      <div id="emergency-contact-card"></div>
+    </div>
+
+    <div class="section" id="vet-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon vet">&#x1FA7A;</div>
+        <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
+      </div>
+      <div class="pin-error" id="pin-error">Code PIN incorrect.</div>
+      <button class="vet-btn" id="vet-btn" onclick="showPinForm()">Entrer le code d'acc&egrave;s</button>
+      <div class="vet-form" id="vet-form">
+        <input type="password" id="pin-input" placeholder="&bull; &bull; &bull; &bull;" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}">
+        <button class="vet-submit" onclick="verifyPin()">V&eacute;rifier</button>
+        <div class="vet-hint">Code fourni par le propri&eacute;taire de l'animal</div>
+      </div>
+    </div>
+
     <div class="section" id="medical-section" style="display:none">
-      <div class="section-title">Donn&eacute;es m&eacute;dicales <span class="medical-badge">ACC&Egrave;S V&Eacute;TO</span></div>
+      <div class="section-header">
+        <div class="section-icon medical">&#x2695;&#xFE0F;</div>
+        <div class="section-title">Donn&eacute;es m&eacute;dicales</div>
+        <span class="medical-badge">V&Eacute;TO</span>
+      </div>
       <div id="medical-rows"></div>
     </div>
 
-    <!-- QR code -->
-    <div class="qr-section" id="qr-section" style="display:none">
-      <div class="section-title">Partager ce profil</div>
-      <canvas id="qr-canvas"></canvas>
-      <p>Scannez ce QR code ou partagez le lien</p>
+    <div class="section" id="qr-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon qr">&#x1F517;</div>
+        <div class="section-title">Partager ce profil</div>
+      </div>
+      <div class="qr-inner">
+        <canvas id="qr-canvas"></canvas>
+        <div class="qr-hint">Scannez ou partagez le lien</div>
+      </div>
     </div>
 
-    <div class="footer">
-      <span class="truffe-logo">TRUFFE</span><br>
-      M&eacute;daillons NFC pour animaux<br>
-      <a href="https://truffe.pet">truffe.pet</a>
+    <div class="portal-footer">
+      <div class="portal-footer-logo">truffe<span class="dot"></span></div>
+      <div class="portal-footer-sub">M&eacute;daillons NFC &middot; <a href="https://truffe.pet">truffe.pet</a></div>
+      <div class="portal-footer-badge">Profil prot&eacute;g&eacute; par Truffe</div>
     </div>
   </div>
 </div>
@@ -140,11 +332,9 @@
   var SUPABASE_URL = 'https://diejcqcjhsbirvjgzetn.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';
   var TIMEOUT_MS = 10000;
-
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   var currentTagId = null;
 
-  // ─── URL parsing ───
   function getTagId() {
     var hash = window.location.hash.replace('#', '');
     if (hash) return decodeURIComponent(hash);
@@ -156,7 +346,6 @@
     return null;
   }
 
-  // ─── Helpers ───
   function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
   function show(id) { document.getElementById(id).style.display = 'block'; }
   function hide(id) { document.getElementById(id).style.display = 'none'; }
@@ -178,58 +367,56 @@
     catch(e) { return iso; }
   }
 
-  // Timeout wrapper for promises
   function withTimeout(promise, ms) {
     return Promise.race([
       promise,
-      new Promise(function(_, reject) {
-        setTimeout(function() { reject(new Error('timeout')); }, ms);
-      })
+      new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, ms); })
     ]);
   }
 
-  // ─── Geolocation + scan logging ───
   function logScan() {
-    // Try to get geolocation first, then log the scan
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         function(pos) {
-          // Got position — log with coordinates
           sb.rpc('log_nfc_scan', {
-            p_nfc_tag_id: currentTagId,
-            p_user_agent: navigator.userAgent,
-            p_latitude: pos.coords.latitude,
-            p_longitude: pos.coords.longitude
-          }).catch(function(e) { console.warn('[Truffe] logScan error:', e); });
+            p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent,
+            p_latitude: pos.coords.latitude, p_longitude: pos.coords.longitude
+          }).catch(function() {});
         },
         function() {
-          // Geolocation denied or failed — log without coordinates
           sb.rpc('log_nfc_scan', {
-            p_nfc_tag_id: currentTagId,
-            p_user_agent: navigator.userAgent
-          }).catch(function(e) { console.warn('[Truffe] logScan error:', e); });
+            p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent
+          }).catch(function() {});
         },
         { timeout: 5000, maximumAge: 60000 }
       );
     } else {
-      // No geolocation API — log without coordinates
       sb.rpc('log_nfc_scan', {
-        p_nfc_tag_id: currentTagId,
-        p_user_agent: navigator.userAgent
-      }).catch(function(e) { console.warn('[Truffe] logScan error:', e); });
+        p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent
+      }).catch(function() {});
     }
   }
 
-  // ─── Render profile ───
   function renderProfile(p) {
     document.title = p.name + ' — Truffe';
 
     var hero = document.getElementById('hero');
     if (p.photo_url) {
-      hero.innerHTML = '<img src="' + esc(p.photo_url) + '" alt="' + esc(p.name) + '">';
+      var img = document.createElement('img');
+      img.src = p.photo_url; img.alt = p.name;
+      hero.insertBefore(img, hero.firstChild);
     } else {
-      hero.innerHTML = '<div class="hero-placeholder">' + speciesEmoji(p.species) + '</div>';
+      var ph = document.createElement('div');
+      ph.className = 'hero-placeholder';
+      ph.textContent = speciesEmoji(p.species);
+      hero.insertBefore(ph, hero.firstChild);
     }
+
+    document.getElementById('pet-name').textContent = p.name;
+    var metaParts = [speciesLabel(p.species)];
+    if (p.breed) metaParts.push(p.breed);
+    if (p.color) metaParts.push(p.color);
+    document.getElementById('pet-meta').textContent = metaParts.join(' · ');
 
     if (p.is_lost) {
       document.getElementById('lost-banner').textContent = '⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';
@@ -240,18 +427,19 @@
       }
     }
 
-    var metaParts = [speciesLabel(p.species)];
-    if (p.breed) metaParts.push(p.breed);
-    if (p.color) metaParts.push(p.color);
-    document.getElementById('pet-name').textContent = p.name;
-    document.getElementById('pet-meta').textContent = metaParts.join(' · ');
-
     if (p.emergency_contact_name || p.emergency_contact_phone) {
-      var rows = '';
-      if (p.emergency_contact_name) rows += infoRow('Contact', p.emergency_contact_name);
-      if (p.emergency_contact_phone) rows += infoRow('Téléphone', p.emergency_contact_phone, true);
-      document.getElementById('emergency-rows').innerHTML = rows;
-      if (p.is_lost) document.getElementById('emergency-title').innerHTML = '📞 Contactez le propriétaire';
+      var initial = (p.emergency_contact_name || '?').charAt(0).toUpperCase();
+      var html = '<div class="contact-card">';
+      html += '<div class="contact-avatar">' + esc(initial) + '</div>';
+      html += '<div style="flex:1">';
+      if (p.emergency_contact_name) html += '<div class="contact-name">' + esc(p.emergency_contact_name) + '</div>';
+      if (p.emergency_contact_phone) html += '<div class="contact-phone"><a href="tel:' + esc(p.emergency_contact_phone) + '">' + esc(p.emergency_contact_phone) + '</a></div>';
+      html += '</div></div>';
+      if (p.emergency_contact_phone) {
+        html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
+      }
+      document.getElementById('emergency-contact-card').innerHTML = html;
+      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propriétaire';
       show('emergency-section');
     }
 
@@ -284,14 +472,12 @@
     if (typeof QRCode === 'undefined') return;
     try {
       QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, {
-        width: 160, margin: 2,
-        color: { dark: '#0F3327', light: '#FFFFFF' }
+        width: 140, margin: 2, color: { dark: '#0F3327', light: '#FFFFFF' }
       });
       show('qr-section');
-    } catch(e) { console.warn('[Truffe] QR generation failed:', e); }
+    } catch(e) {}
   }
 
-  // ─── PIN verification ───
   window.showPinForm = function() {
     document.getElementById('vet-btn').style.display = 'none';
     document.getElementById('vet-form').classList.add('visible');
@@ -310,59 +496,33 @@
       } else if (res.data && !res.data.error) {
         renderMedical(res.data);
       } else {
-        document.getElementById('pin-error').textContent = 'Code PIN incorrect. Réessayez.';
+        document.getElementById('pin-error').textContent = 'Code incorrect. Réessayez.';
         document.getElementById('pin-error').classList.add('visible');
         document.getElementById('pin-input').value = '';
         document.getElementById('pin-input').focus();
       }
     } catch(e) {
-      console.warn('[Truffe] verifyPin error:', e);
-      document.getElementById('pin-error').textContent = 'Erreur de connexion. Réessayez.';
+      document.getElementById('pin-error').textContent = 'Erreur de connexion.';
       document.getElementById('pin-error').classList.add('visible');
     }
   };
 
   document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('pin-input');
-    if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
+    var inp = document.getElementById('pin-input');
+    if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
   });
 
-  // ─── Init ───
   async function init() {
     currentTagId = getTagId();
-
-    if (!currentTagId) {
-      hide('loading-view');
-      show('not-found-view');
-      return;
-    }
-
+    if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
     try {
-      // Log the scan (with geolocation if available) — fire and forget
       logScan();
-
-      // Fetch profile with timeout
-      var res = await withTimeout(
-        sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }),
-        TIMEOUT_MS
-      );
-
-      if (res.error || !res.data) {
-        console.warn('[Truffe] Profile fetch error:', res.error);
-        hide('loading-view');
-        show('not-found-view');
-        return;
-      }
-
+      var res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
+      if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
       renderProfile(res.data);
-
     } catch(e) {
-      console.error('[Truffe] Init error:', e);
       hide('loading-view');
-      if (e.message === 'timeout') {
-        document.getElementById('error-message').textContent =
-          'Le chargement prend trop de temps. Vérifie ta connexion internet.';
-      }
+      if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
       show('error-view');
     }
   }
