@@ -541,17 +541,17 @@
 
   // ─── Geoloc: opt-in after profile loads ───
   function logScanWithoutGeo() {
-    sb.rpc('log_nfc_scan', { p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent }).catch(function() {});
+    try { sb.rpc('log_nfc_scan', { p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent }).then(function(){}); } catch(e) {}
   }
 
   window.geolocAccept = function() {
     hide('geoloc-banner');
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(function(pos) {
-        sb.rpc('log_nfc_scan', {
+        try { sb.rpc('log_nfc_scan', {
           p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent,
           p_latitude: pos.coords.latitude, p_longitude: pos.coords.longitude
-        }).catch(function() {});
+        }).then(function(){}); } catch(e) {}
       }, function() {}, { timeout: 5000, maximumAge: 60000 });
     }
   };
