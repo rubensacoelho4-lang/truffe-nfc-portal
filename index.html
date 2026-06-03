@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0F3327">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Truffe</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230F3327' width='100' height='100' rx='20'/><text y='.9em' x='5' font-size='80'>🐾</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="data:application/json,{%22name%22:%22Truffe%22,%22short_name%22:%22Truffe%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23F2E9E2%22,%22theme_color%22:%22%230F3327%22}">
   <style>
     :root {
       --forest: #0F3327;
@@ -21,20 +26,50 @@
       --error: #D94F4F;
       --error-light: #FDEAEA;
       --success: #3A8C5C;
+      --card-bg: var(--white);
+      --body-bg: var(--cream);
+      --text-primary: var(--forest);
+      --text-secondary: var(--forest-mid);
+      --text-hint: var(--forest-light);
+      --border-subtle: rgba(15,51,39,0.04);
+      --shadow-card: 0 2px 12px rgba(15,51,39,0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card-bg: #1A2E26;
+        --body-bg: #0D1F18;
+        --text-primary: #E8DED6;
+        --text-secondary: #8FA99D;
+        --text-hint: #5E7A6E;
+        --border-subtle: rgba(242,233,226,0.06);
+        --shadow-card: 0 2px 12px rgba(0,0,0,0.2);
+        --sand-dark: #1A2E26;
+      }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--cream); color: var(--forest);
+      background: var(--body-bg); color: var(--text-primary);
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
     .container { max-width: 440px; margin: 0 auto; padding: 0 0 32px; }
 
+    /* ─── Animations ─── */
+    @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
+    @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
+    .anim-in { animation: fade-up 0.5s ease both; }
+    .anim-d1 { animation-delay: 0.1s; }
+    .anim-d2 { animation-delay: 0.2s; }
+    .anim-d3 { animation-delay: 0.3s; }
+    .anim-d4 { animation-delay: 0.4s; }
+
     /* ─── Brand header ─── */
     .brand-header {
       display: flex; align-items: center; justify-content: center;
-      padding: 14px 16px;
-      background: var(--forest);
+      padding: 14px 16px; background: var(--forest);
     }
     .brand-header-logo {
       font-family: 'Quicksand', sans-serif;
@@ -49,15 +84,25 @@
     /* ─── Hero ─── */
     .hero {
       width: calc(100% - 32px); margin: 16px auto 0;
-      height: 340px; background: var(--sand-dark);
+      height: 360px; background: var(--sand-dark);
       position: relative; overflow: hidden;
       border-radius: 24px;
       box-shadow: 0 8px 32px rgba(15,51,39,0.15);
     }
-    .hero img { width: 100%; height: 100%; object-fit: cover; }
+    .hero img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .hero img.loaded { opacity: 1; }
+    .hero-skeleton {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%);
+      background-size: 400px 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
     .hero::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 180px;
-      background: linear-gradient(to top, rgba(15,51,39,0.7), transparent);
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to top, rgba(15,51,39,0.75), transparent);
       pointer-events: none; border-radius: 0 0 24px 24px;
     }
     .hero-placeholder {
@@ -70,44 +115,99 @@
       position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 2;
     }
     .hero-name-overlay .name {
-      font-size: 34px; font-weight: 700; color: var(--white);
+      font-size: 34px; font-weight: 700; color: #fff;
       line-height: 1.1; letter-spacing: -0.5px;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
     }
     .hero-name-overlay .meta {
       font-size: 14px; color: rgba(255,255,255,0.85);
       margin-top: 6px; font-weight: 600;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.2);
     }
     .hero-badge-nfc {
       position: absolute; top: 16px; right: 16px; z-index: 2;
       background: rgba(255,255,255,0.15); backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 6px 14px; border-radius: 20px;
-      font-size: 11px; font-weight: 700; color: var(--white);
-      letter-spacing: 0.5px;
+      font-size: 11px; font-weight: 700; color: #fff;
+      letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;
     }
+    .hero-badge-nfc::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: #6FCF7C; animation: pulse-dot 2s infinite;
+    }
+
+    /* ─── Action bar ─── */
+    .action-bar {
+      display: flex; gap: 10px; margin: 14px 16px 0;
+    }
+    .action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 13px 12px; border-radius: 14px;
+      background: var(--card-bg); border: none;
+      box-shadow: var(--shadow-card);
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      color: var(--text-primary); cursor: pointer;
+      text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .action-btn:active { transform: scale(0.97); }
 
     /* ─── Lost banner ─── */
     .lost-banner {
-      background: var(--error); color: var(--white);
+      background: var(--error); color: #fff;
       padding: 14px 20px; text-align: center;
       font-weight: 700; font-size: 14px; letter-spacing: 0.8px;
       animation: pulse-lost 2s infinite;
+      margin: 14px 16px 0; border-radius: 14px;
     }
-    @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.85; } }
     .lost-message {
       background: var(--error-light); color: var(--error);
       padding: 14px 18px; font-size: 14px; line-height: 1.6;
       border-left: 4px solid var(--error);
-      margin: 16px 16px 0; border-radius: 0 14px 14px 0;
+      margin: 10px 16px 0; border-radius: 0 14px 14px 0;
+    }
+    .sticky-call {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(242,233,226,0.92); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(15,51,39,0.06);
+      z-index: 50; display: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sticky-call { background: rgba(13,31,24,0.92); }
+    }
+    .sticky-call a {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      max-width: 440px; margin: 0 auto; padding: 16px;
+      background: var(--error); color: #fff;
+      border-radius: 16px; font-size: 16px; font-weight: 700;
+      text-decoration: none; font-family: inherit;
+      box-shadow: 0 4px 20px rgba(217,79,79,0.3);
+    }
+
+    /* ─── Geoloc consent ─── */
+    .geoloc-banner {
+      margin: 14px 16px 0; padding: 14px 16px;
+      background: rgba(201,125,89,0.08); border-radius: 14px;
+      display: none; text-align: center;
+    }
+    .geoloc-banner p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
+    .geoloc-banner button {
+      padding: 10px 20px; border-radius: 10px; border: none;
+      background: var(--terracotta); color: #fff;
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; margin: 0 4px;
+    }
+    .geoloc-banner .geoloc-dismiss {
+      background: transparent; color: var(--text-hint);
     }
 
     /* ─── Sections ─── */
     .section {
-      background: var(--white); border-radius: 20px;
+      background: var(--card-bg); border-radius: 20px;
       margin: 14px 16px; padding: 20px;
-      box-shadow: 0 2px 12px rgba(15,51,39,0.06);
+      box-shadow: var(--shadow-card);
     }
     .section-header {
       display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
@@ -121,42 +221,38 @@
     .section-icon.vet { background: rgba(15,51,39,0.06); }
     .section-icon.medical { background: rgba(58,140,92,0.1); }
     .section-icon.qr { background: rgba(143,169,157,0.12); }
-    .section-title {
-      font-size: 14px; font-weight: 700; color: var(--forest);
-      flex: 1;
-    }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; }
     .info-row {
       display: flex; justify-content: space-between; align-items: baseline;
-      padding: 10px 0; border-bottom: 1px solid rgba(15,51,39,0.04);
+      padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
     }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: 14px; color: var(--forest-mid); }
-    .info-value { font-size: 14px; color: var(--forest); font-weight: 600; text-align: right; }
+    .info-label { font-size: 14px; color: var(--text-secondary); }
+    .info-value { font-size: 14px; color: var(--text-primary); font-weight: 600; text-align: right; }
     .info-value a { color: var(--terracotta); text-decoration: none; font-weight: 700; }
 
     /* ─── Contact card ─── */
     .contact-card {
       display: flex; align-items: center; gap: 14px;
-      background: rgba(242,233,226,0.5); border-radius: 16px; padding: 16px;
+      background: var(--border-subtle); border-radius: 16px; padding: 16px;
     }
     .contact-avatar {
-      width: 48px; height: 48px; border-radius: 24px;
-      background: var(--forest);
+      width: 48px; height: 48px; border-radius: 24px; background: var(--forest);
       display: flex; align-items: center; justify-content: center;
       font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0;
     }
-    .contact-name { font-size: 15px; font-weight: 700; color: var(--forest); }
+    .contact-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
     .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
     .contact-phone a { color: var(--terracotta); text-decoration: none; }
     .call-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin-top: 12px; padding: 13px;
-      background: var(--terracotta); color: var(--white);
+      margin-top: 12px; padding: 14px;
+      background: var(--terracotta); color: #fff;
       border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
       cursor: pointer; font-family: inherit; width: 100%;
-      text-decoration: none; transition: opacity 0.2s;
+      text-decoration: none; transition: transform 0.15s;
     }
-    .call-btn:hover { opacity: 0.9; }
+    .call-btn:active { transform: scale(0.97); }
 
     /* ─── Vet access ─── */
     .vet-btn {
@@ -165,28 +261,37 @@
       background: var(--forest); color: var(--cream);
       border: none; border-radius: 14px;
       font-size: 15px; font-weight: 700; cursor: pointer;
-      font-family: inherit; transition: opacity 0.2s;
+      font-family: inherit; transition: transform 0.15s;
     }
-    .vet-btn:hover { opacity: 0.9; }
+    .vet-btn:active { transform: scale(0.97); }
     .vet-form { margin-top: 14px; display: none; }
     .vet-form.visible { display: block; }
     .vet-form input {
       width: 100%; padding: 14px;
       border: 2px solid var(--sand-dark); border-radius: 14px;
       font-size: 22px; text-align: center; letter-spacing: 10px;
-      color: var(--forest); background: var(--cream);
+      color: var(--text-primary); background: var(--body-bg);
       outline: none; font-family: inherit; font-weight: 700;
+      autocomplete: off;
     }
     .vet-form input:focus { border-color: var(--terracotta); }
     .vet-submit {
-      display: block; width: 100%; margin-top: 10px; padding: 14px;
-      background: var(--terracotta); color: var(--white);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 10px; padding: 14px;
+      background: var(--terracotta); color: #fff;
       border: none; border-radius: 14px;
       font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
       transition: opacity 0.2s;
     }
-    .vet-submit:hover { opacity: 0.9; }
-    .vet-hint { font-size: 12px; color: var(--forest-light); margin-top: 10px; text-align: center; }
+    .vet-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .vet-submit .spinner-sm {
+      width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .vet-submit.loading .spinner-sm { display: block; }
+    .vet-submit.loading .submit-text { display: none; }
+    .vet-hint { font-size: 12px; color: var(--text-hint); margin-top: 10px; text-align: center; }
     .pin-error {
       background: var(--error-light); color: var(--error);
       padding: 12px; border-radius: 12px;
@@ -195,39 +300,47 @@
     }
     .pin-error.visible { display: block; }
     .medical-badge {
-      display: inline-block; background: var(--success); color: var(--white);
+      display: inline-block; background: var(--success); color: #fff;
       font-size: 10px; font-weight: 700; padding: 3px 10px;
       border-radius: 999px; letter-spacing: 0.5px; vertical-align: middle;
     }
 
-    /* ─── QR ─── */
+    /* ─── QR + share ─── */
     .qr-inner { text-align: center; }
-    .qr-inner canvas { margin: 0 auto 10px; border-radius: 8px; }
-    .qr-hint { font-size: 12px; color: var(--forest-light); }
+    .qr-inner canvas { margin: 0 auto 12px; border-radius: 8px; }
+    .share-actions { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+    .share-btn {
+      padding: 10px 18px; border-radius: 10px; border: none;
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: transform 0.15s;
+    }
+    .share-btn:active { transform: scale(0.96); }
+    .share-btn.primary { background: var(--terracotta); color: #fff; }
+    .share-btn.secondary { background: var(--border-subtle); color: var(--text-primary); }
+    .copy-feedback {
+      font-size: 12px; color: var(--success); font-weight: 600;
+      margin-top: 6px; display: none; text-align: center;
+    }
 
     /* ─── Footer ─── */
-    .portal-footer {
-      text-align: center; padding: 28px 16px 20px;
-    }
+    .portal-footer { text-align: center; padding: 28px 16px 20px; }
     .portal-footer-logo {
       font-family: 'Quicksand', sans-serif;
-      font-size: 22px; font-weight: 700; color: var(--forest);
+      font-size: 22px; font-weight: 700; color: var(--text-primary);
       letter-spacing: 0.5px; display: inline-block; position: relative;
     }
     .portal-footer-logo .dot {
-      position: absolute; top: 0px; right: -4px;
+      position: absolute; top: 0; right: -4px;
       width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta);
     }
-    .portal-footer-sub {
-      font-size: 12px; color: var(--forest-light); margin-top: 4px;
-    }
+    .portal-footer-sub { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
     .portal-footer-sub a { color: var(--terracotta); text-decoration: none; font-weight: 600; }
     .portal-footer-badge {
       display: inline-block; margin-top: 12px;
       padding: 6px 16px; border-radius: 20px;
-      background: rgba(15,51,39,0.04);
-      font-size: 11px; font-weight: 600; color: var(--forest-mid);
-      letter-spacing: 0.3px;
+      background: var(--border-subtle);
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
     }
 
     /* ─── States ─── */
@@ -236,23 +349,21 @@
       justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
     }
     .not-found-emoji { font-size: 64px; margin-bottom: 20px; }
-    .not-found h1 { font-size: 24px; font-weight: 700; color: var(--forest); margin-bottom: 10px; }
-    .not-found p { font-size: 15px; color: var(--forest-mid); max-width: 300px; line-height: 1.6; margin-bottom: 28px; }
+    .not-found h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .not-found p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-bottom: 28px; }
     .not-found a {
       display: inline-block; padding: 14px 28px;
-      background: var(--terracotta); color: var(--white);
-      border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 15px;
-      transition: opacity 0.2s;
+      background: var(--terracotta); color: #fff;
+      border-radius: 14px; text-decoration: none; font-weight: 700;
     }
-    .not-found a:hover { opacity: 0.9; }
     .error-view {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
     }
-    .error-view p { font-size: 15px; color: var(--forest-mid); max-width: 300px; line-height: 1.6; margin-top: 14px; }
+    .error-view p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-top: 14px; }
     .error-view button {
       margin-top: 24px; padding: 14px 28px;
-      background: var(--terracotta); color: var(--white);
+      background: var(--terracotta); color: #fff;
       border: none; border-radius: 14px;
       font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
     }
@@ -262,9 +373,7 @@
       border: 3px solid var(--sand-dark); border-top-color: var(--terracotta);
       border-radius: 50%; animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    #profile-view, #not-found-view, #loading-view, #error-view { display: none; }
+    #profile-view, #not-found-view, #error-view { display: none; }
     #loading-view { display: flex; }
   </style>
 </head>
@@ -296,7 +405,9 @@
     <div class="brand-header">
       <div class="brand-header-logo">truffe<span class="dot"></span></div>
     </div>
-    <div class="hero" id="hero">
+
+    <div class="hero anim-in" id="hero">
+      <div class="hero-skeleton" id="hero-skeleton"></div>
       <div class="hero-badge-nfc">NFC</div>
       <div class="hero-name-overlay">
         <div class="name" id="pet-name"></div>
@@ -304,10 +415,23 @@
       </div>
     </div>
 
+    <!-- Action bar: share + call -->
+    <div class="action-bar anim-in anim-d1" id="action-bar">
+      <button class="action-btn" id="share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+      <a class="action-btn" id="call-action-btn" style="display:none">&#x1F4DE; Appeler</a>
+    </div>
+
     <div id="lost-banner" class="lost-banner" style="display:none"></div>
     <div id="lost-message" class="lost-message" style="display:none"></div>
 
-    <div class="section" id="emergency-section" style="display:none">
+    <!-- Geoloc consent (shown after profile loads, only in lost mode) -->
+    <div class="geoloc-banner" id="geoloc-banner">
+      <p>&#x1F4CD; Aidez &agrave; localiser cet animal en partageant votre position approximative</p>
+      <button onclick="geolocAccept()">Partager ma position</button>
+      <button class="geoloc-dismiss" onclick="geolocDismiss()">Non merci</button>
+    </div>
+
+    <div class="section anim-in anim-d1" id="emergency-section" style="display:none">
       <div class="section-header">
         <div class="section-icon emergency">&#x1F4DE;</div>
         <div class="section-title" id="emergency-title">Contact d'urgence</div>
@@ -315,7 +439,7 @@
       <div id="emergency-contact-card"></div>
     </div>
 
-    <div class="section" id="vet-section" style="display:none">
+    <div class="section anim-in anim-d2" id="vet-section" style="display:none">
       <div class="section-header">
         <div class="section-icon vet">&#x1FA7A;</div>
         <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
@@ -323,13 +447,16 @@
       <div class="pin-error" id="pin-error">Code PIN incorrect.</div>
       <button class="vet-btn" id="vet-btn" onclick="showPinForm()">Entrer le code d'acc&egrave;s</button>
       <div class="vet-form" id="vet-form">
-        <input type="password" id="pin-input" placeholder="&bull; &bull; &bull; &bull;" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}">
-        <button class="vet-submit" onclick="verifyPin()">V&eacute;rifier</button>
+        <input type="password" id="pin-input" placeholder="&bull; &bull; &bull; &bull;" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}" autocomplete="off" aria-label="Code PIN v&eacute;t&eacute;rinaire">
+        <button class="vet-submit" id="vet-submit" onclick="verifyPin()">
+          <span class="submit-text">V&eacute;rifier</span>
+          <div class="spinner-sm"></div>
+        </button>
         <div class="vet-hint">Code fourni par le propri&eacute;taire de l'animal</div>
       </div>
     </div>
 
-    <div class="section" id="medical-section" style="display:none">
+    <div class="section anim-in anim-d3" id="medical-section" style="display:none">
       <div class="section-header">
         <div class="section-icon medical">&#x2695;&#xFE0F;</div>
         <div class="section-title">Donn&eacute;es m&eacute;dicales</div>
@@ -338,34 +465,47 @@
       <div id="medical-rows"></div>
     </div>
 
-    <div class="section" id="qr-section" style="display:none">
+    <div class="section anim-in anim-d3" id="qr-section" style="display:none">
       <div class="section-header">
         <div class="section-icon qr">&#x1F517;</div>
         <div class="section-title">Partager ce profil</div>
       </div>
       <div class="qr-inner">
         <canvas id="qr-canvas"></canvas>
-        <div class="qr-hint">Scannez ou partagez le lien</div>
+        <div class="share-actions">
+          <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+          <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+        </div>
+        <div class="copy-feedback" id="copy-feedback">&#x2705; Lien copi&eacute; !</div>
       </div>
     </div>
 
-    <div class="portal-footer">
+    <div class="portal-footer anim-in anim-d4">
       <div class="portal-footer-logo">truffe<span class="dot"></span></div>
       <div class="portal-footer-sub">M&eacute;daillons NFC &middot; <a href="https://truffe.pet">truffe.pet</a></div>
       <div class="portal-footer-badge">Profil prot&eacute;g&eacute; par Truffe</div>
     </div>
   </div>
+
+  <!-- Sticky call in lost mode -->
+  <div class="sticky-call" id="sticky-call">
+    <a id="sticky-call-link">&#x1F6A8; Appeler le propri&eacute;taire</a>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js" defer></script>
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   var SUPABASE_URL = 'https://diejcqcjhsbirvjgzetn.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';
   var TIMEOUT_MS = 10000;
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  var currentTagId = null;
+  var sb, currentTagId = null, currentProfile = null;
+
+  function waitForSupabase(cb) {
+    if (window.supabase) { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); cb(); }
+    else { setTimeout(function() { waitForSupabase(cb); }, 100); }
+  }
 
   function getTagId() {
     var hash = window.location.hash.replace('#', '');
@@ -379,20 +519,20 @@
   }
 
   function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-  function show(id) { document.getElementById(id).style.display = 'block'; }
-  function hide(id) { document.getElementById(id).style.display = 'none'; }
+  function show(id, mode) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = mode || 'block';
+  }
+  function hide(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; }
 
   function infoRow(label, value, isPhone) {
     if (!value) return '';
-    var val = isPhone
-      ? '<a href="tel:' + esc(value) + '">' + esc(value) + '</a>'
-      : esc(value);
+    var val = isPhone ? '<a href="tel:' + esc(value) + '">' + esc(value) + '</a>' : esc(value);
     return '<div class="info-row"><span class="info-label">' + esc(label) + '</span><span class="info-value">' + val + '</span></div>';
   }
 
   function speciesLabel(s) { return s === 'cat' ? 'Chat' : 'Chien'; }
   function speciesEmoji(s) { return s === 'cat' ? '🐱' : '🐶'; }
-
   function formatDate(iso) {
     if (!iso) return null;
     try { return new Date(iso).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }); }
@@ -400,44 +540,78 @@
   }
 
   function withTimeout(promise, ms) {
-    return Promise.race([
-      promise,
-      new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, ms); })
-    ]);
+    return Promise.race([promise, new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, ms); })]);
   }
 
-  function logScan() {
+  // ─── Geoloc: opt-in after profile loads ───
+  function logScanWithoutGeo() {
+    sb.rpc('log_nfc_scan', { p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent }).catch(function() {});
+  }
+
+  window.geolocAccept = function() {
+    hide('geoloc-banner');
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        function(pos) {
-          sb.rpc('log_nfc_scan', {
-            p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent,
-            p_latitude: pos.coords.latitude, p_longitude: pos.coords.longitude
-          }).catch(function() {});
-        },
-        function() {
-          sb.rpc('log_nfc_scan', {
-            p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent
-          }).catch(function() {});
-        },
-        { timeout: 5000, maximumAge: 60000 }
-      );
-    } else {
-      sb.rpc('log_nfc_scan', {
-        p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        sb.rpc('log_nfc_scan', {
+          p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent,
+          p_latitude: pos.coords.latitude, p_longitude: pos.coords.longitude
+        }).catch(function() {});
+      }, function() {}, { timeout: 5000, maximumAge: 60000 });
+    }
+  };
+  window.geolocDismiss = function() { hide('geoloc-banner'); };
+
+  // ─── Native share ───
+  window.nativeShare = function() {
+    if (navigator.share && currentProfile) {
+      navigator.share({
+        title: currentProfile.name + ' — Truffe',
+        text: 'Profil de ' + currentProfile.name + ' sur Truffe',
+        url: window.location.href
       }).catch(function() {});
     }
-  }
+  };
 
+  // ─── Copy link ───
+  window.copyLink = function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var fb = document.getElementById('copy-feedback');
+        fb.style.display = 'block';
+        setTimeout(function() { fb.style.display = 'none'; }, 2000);
+      });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = window.location.href; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      var fb = document.getElementById('copy-feedback');
+      fb.style.display = 'block';
+      setTimeout(function() { fb.style.display = 'none'; }, 2000);
+    }
+  };
+
+  // ─── Render profile ───
   function renderProfile(p) {
+    currentProfile = p;
     document.title = p.name + ' — Truffe';
 
+    // JSON-LD
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Thing', name: p.name, description: speciesLabel(p.species) + (p.breed ? ' · ' + p.breed : '') });
+    document.head.appendChild(ld);
+
+    // Hero image with skeleton
     var hero = document.getElementById('hero');
     if (p.photo_url) {
       var img = document.createElement('img');
-      img.src = p.photo_url; img.alt = p.name;
+      img.alt = p.name;
+      img.onload = function() { img.classList.add('loaded'); hide('hero-skeleton'); };
+      img.onerror = function() { hide('hero-skeleton'); };
+      img.src = p.photo_url;
       hero.insertBefore(img, hero.firstChild);
     } else {
+      hide('hero-skeleton');
       var ph = document.createElement('div');
       ph.className = 'hero-placeholder';
       ph.textContent = speciesEmoji(p.species);
@@ -450,6 +624,19 @@
     if (p.color) metaParts.push(p.color);
     document.getElementById('pet-meta').textContent = metaParts.join(' · ');
 
+    // Action bar
+    if (navigator.share) {
+      document.getElementById('share-btn').style.display = 'flex';
+      document.getElementById('native-share-btn').style.display = 'flex';
+    }
+    if (p.emergency_contact_phone) {
+      var callBtn = document.getElementById('call-action-btn');
+      callBtn.href = 'tel:' + p.emergency_contact_phone;
+      callBtn.style.display = 'flex';
+    }
+    show('action-bar', 'flex');
+
+    // Lost mode
     if (p.is_lost) {
       document.getElementById('lost-banner').textContent = '⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';
       show('lost-banner');
@@ -457,8 +644,22 @@
         document.getElementById('lost-message').textContent = p.lost_message;
         show('lost-message');
       }
+      // Sticky call button
+      if (p.emergency_contact_phone) {
+        document.getElementById('sticky-call-link').href = 'tel:' + p.emergency_contact_phone;
+        show('sticky-call');
+        document.querySelector('.container').style.paddingBottom = '80px';
+      }
+      // Geoloc consent banner (only in lost mode)
+      if ('geolocation' in navigator) {
+        show('geoloc-banner');
+      }
     }
 
+    // Log scan WITHOUT geoloc (geoloc is opt-in via banner)
+    logScanWithoutGeo();
+
+    // Emergency contact
     if (p.emergency_contact_name || p.emergency_contact_phone) {
       var initial = (p.emergency_contact_name || '?').charAt(0).toUpperCase();
       var html = '<div class="contact-card">';
@@ -467,9 +668,7 @@
       if (p.emergency_contact_name) html += '<div class="contact-name">' + esc(p.emergency_contact_name) + '</div>';
       if (p.emergency_contact_phone) html += '<div class="contact-phone"><a href="tel:' + esc(p.emergency_contact_phone) + '">' + esc(p.emergency_contact_phone) + '</a></div>';
       html += '</div></div>';
-      if (p.emergency_contact_phone) {
-        html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
-      }
+      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
       document.getElementById('emergency-contact-card').innerHTML = html;
       if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propriétaire';
       show('emergency-section');
@@ -484,10 +683,7 @@
 
   function renderMedical(v) {
     var rows = '';
-    if (v.sex) {
-      var sl = v.sex === 'male' ? 'Mâle' : v.sex === 'female' ? 'Femelle' : 'Non spécifié';
-      rows += infoRow('Sexe', sl);
-    }
+    if (v.sex) { rows += infoRow('Sexe', v.sex === 'male' ? 'Mâle' : v.sex === 'female' ? 'Femelle' : 'Non spécifié'); }
     rows += infoRow('Date de naissance', formatDate(v.birthdate));
     rows += infoRow('Poids', v.weight_kg ? v.weight_kg + ' kg' : null);
     rows += infoRow('N° micropuce', v.microchip_number);
@@ -501,7 +697,7 @@
   }
 
   function generateQR() {
-    if (typeof QRCode === 'undefined') return;
+    if (typeof QRCode === 'undefined') { setTimeout(generateQR, 200); return; }
     try {
       QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, {
         width: 140, margin: 2, color: { dark: '#0F3327', light: '#FFFFFF' }
@@ -510,6 +706,7 @@
     } catch(e) {}
   }
 
+  // ─── PIN ───
   window.showPinForm = function() {
     document.getElementById('vet-btn').style.display = 'none';
     document.getElementById('vet-form').classList.add('visible');
@@ -519,8 +716,11 @@
   window.verifyPin = async function() {
     var pin = document.getElementById('pin-input').value.trim();
     if (!pin || pin.length < 4) return;
+    var btn = document.getElementById('vet-submit');
+    btn.classList.add('loading'); btn.disabled = true;
     try {
       var res = await sb.rpc('verify_vet_pin', { p_nfc_tag_id: currentTagId, p_pin: pin });
+      btn.classList.remove('loading'); btn.disabled = false;
       if (res.data && res.data.error === 'too_many_attempts') {
         document.getElementById('pin-error').textContent = 'Trop de tentatives. Réessayez dans 15 minutes.';
         document.getElementById('pin-error').classList.add('visible');
@@ -534,21 +734,21 @@
         document.getElementById('pin-input').focus();
       }
     } catch(e) {
+      btn.classList.remove('loading'); btn.disabled = false;
       document.getElementById('pin-error').textContent = 'Erreur de connexion.';
       document.getElementById('pin-error').classList.add('visible');
     }
   };
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var inp = document.getElementById('pin-input');
-    if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
-  });
+  var inp = document.getElementById('pin-input');
+  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
 
-  async function init() {
-    currentTagId = getTagId();
-    if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
+  // ─── Init ───
+  currentTagId = getTagId();
+  if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
+
+  waitForSupabase(async function() {
     try {
-      logScan();
       var res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
       if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
       renderProfile(res.data);
@@ -557,10 +757,8 @@
       if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
       show('error-view');
     }
-  }
-
-  init();
-})();
+  });
+});
 </script>
 </body>
 </html>
