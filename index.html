@@ -493,19 +493,15 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
   var SUPABASE_URL = 'https://diejcqcjhsbirvjgzetn.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';
   var TIMEOUT_MS = 10000;
-  var sb, currentTagId = null, currentProfile = null;
-
-  function waitForSupabase(cb) {
-    if (window.supabase) { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); cb(); }
-    else { setTimeout(function() { waitForSupabase(cb); }, 100); }
-  }
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var currentTagId = null, currentProfile = null;
 
   function getTagId() {
     var hash = window.location.hash.replace('#', '');
@@ -656,9 +652,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // Log scan WITHOUT geoloc (geoloc is opt-in via banner)
-    logScanWithoutGeo();
-
     // Emergency contact
     if (p.emergency_contact_name || p.emergency_contact_phone) {
       var initial = (p.emergency_contact_name || '?').charAt(0).toUpperCase();
@@ -744,11 +737,11 @@ document.addEventListener('DOMContentLoaded', function() {
   if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
 
   // ─── Init ───
-  currentTagId = getTagId();
-  if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
-
-  waitForSupabase(async function() {
+  async function init() {
+    currentTagId = getTagId();
+    if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
     try {
+      logScanWithoutGeo();
       var res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
       if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
       renderProfile(res.data);
@@ -757,8 +750,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
       show('error-view');
     }
-  });
-});
+  }
+
+  init();
+})();
 </script>
 </body>
 </html>
