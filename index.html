@@ -30,16 +30,35 @@
     }
     .container { max-width: 440px; margin: 0 auto; padding: 0 0 32px; }
 
+    /* ─── Brand header ─── */
+    .brand-header {
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px 16px;
+      background: var(--forest);
+    }
+    .brand-header-logo {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 16px; font-weight: 700; color: var(--cream);
+      letter-spacing: 0.5px; position: relative;
+    }
+    .brand-header-logo .dot {
+      position: absolute; top: -1px; right: -3px;
+      width: 5px; height: 5px; border-radius: 50%; background: var(--terracotta);
+    }
+
     /* ─── Hero ─── */
     .hero {
-      width: 100%; height: 320px; background: var(--sand-dark);
+      width: calc(100% - 32px); margin: 16px auto 0;
+      height: 340px; background: var(--sand-dark);
       position: relative; overflow: hidden;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(15,51,39,0.15);
     }
     .hero img { width: 100%; height: 100%; object-fit: cover; }
     .hero::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 140px;
-      background: linear-gradient(to top, rgba(15,51,39,0.55), transparent);
-      pointer-events: none;
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 180px;
+      background: linear-gradient(to top, rgba(15,51,39,0.7), transparent);
+      pointer-events: none; border-radius: 0 0 24px 24px;
     }
     .hero-placeholder {
       width: 100%; height: 100%;
@@ -48,16 +67,25 @@
       background: linear-gradient(145deg, var(--forest) 0%, #1A4A3A 100%);
     }
     .hero-name-overlay {
-      position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 2;
+      position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 2;
     }
     .hero-name-overlay .name {
-      font-size: 32px; font-weight: 700; color: var(--white);
-      line-height: 1.15; letter-spacing: -0.3px;
-      text-shadow: 0 1px 8px rgba(0,0,0,0.2);
+      font-size: 34px; font-weight: 700; color: var(--white);
+      line-height: 1.1; letter-spacing: -0.5px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
     }
     .hero-name-overlay .meta {
-      font-size: 14px; color: rgba(255,255,255,0.8);
-      margin-top: 4px; font-weight: 500;
+      font-size: 14px; color: rgba(255,255,255,0.85);
+      margin-top: 6px; font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .hero-badge-nfc {
+      position: absolute; top: 16px; right: 16px; z-index: 2;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; color: var(--white);
+      letter-spacing: 0.5px;
     }
 
     /* ─── Lost banner ─── */
@@ -265,7 +293,11 @@
   </div>
 
   <div id="profile-view">
+    <div class="brand-header">
+      <div class="brand-header-logo">truffe<span class="dot"></span></div>
+    </div>
     <div class="hero" id="hero">
+      <div class="hero-badge-nfc">NFC</div>
       <div class="hero-name-overlay">
         <div class="name" id="pet-name"></div>
         <div class="meta" id="pet-meta"></div>
