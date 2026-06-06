@@ -72,21 +72,53 @@
     .container { max-width: 560px; margin: 0 auto; padding: 0 0 32px; }
 
     /* ─── Animations ─── */
-    @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+    @keyframes shimmer2 { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
     @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 10%,50%,90% { transform: translateX(-4px); } 30%,70% { transform: translateX(4px); } }
+    @keyframes ripple-out { 0% { transform: scale(0); opacity: 0.4; } 100% { transform: scale(2.5); opacity: 0; } }
+    @keyframes bounce-tap { 0% { transform: scale(0.95); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    @keyframes toast-in { 0% { transform: translateY(20px) translateX(-50%); opacity: 0; } 100% { transform: translateY(0) translateX(-50%); opacity: 1; } }
+    @keyframes toast-out { 0% { transform: translateY(0) translateX(-50%); opacity: 1; } 100% { transform: translateY(-10px) translateX(-50%); opacity: 0; } }
+    @keyframes pulse-avatar { 0%,100% { box-shadow: 0 0 0 0 rgba(201,125,89,0.4); } 50% { box-shadow: 0 0 0 8px rgba(201,125,89,0); } }
+    @keyframes success-pulse { 0% { box-shadow: 0 0 0 0 rgba(58,140,92,0.4); } 100% { box-shadow: 0 0 0 12px rgba(58,140,92,0); } }
+
+    /* Scroll-driven reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+
+    /* Legacy anim classes (kept for initial hero) */
     .anim-in { animation: fade-up 0.5s ease both; }
     .anim-d1 { animation-delay: 0.1s; }
     .anim-d2 { animation-delay: 0.2s; }
     .anim-d3 { animation-delay: 0.3s; }
     .anim-d4 { animation-delay: 0.4s; }
 
+    /* ─── Scroll progress ─── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: var(--terracotta); z-index: 102;
+      transition: width 0.1s linear;
+    }
+
     /* ─── Brand header ─── */
     .brand-header {
       display: flex; align-items: center; justify-content: center;
       padding: 14px 16px; background: var(--forest);
+      position: sticky; top: 0; z-index: 100;
+      transition: padding 0.25s ease, backdrop-filter 0.25s ease;
+    }
+    .brand-header.scrolled {
+      padding: 10px 16px;
+      background: rgba(15,51,39,0.88);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 2px solid var(--terracotta);
     }
     .brand-header-logo {
       font-family: var(--disp);
@@ -114,9 +146,11 @@
     .hero img.loaded { opacity: 1; }
     .hero-skeleton {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%);
-      background-size: 400px 100%;
-      animation: shimmer 1.5s infinite linear;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 30%, transparent 60%),
+        linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%);
+      background-size: 600px 100%, 400px 100%;
+      animation: shimmer2 2s infinite linear, shimmer 1.5s infinite linear;
     }
     .hero::after {
       content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
@@ -158,6 +192,33 @@
       background: #3A8C5C; animation: pulse-dot 2s infinite;
     }
 
+    /* ─── Stat pills ─── */
+    .stat-pills {
+      display: flex; gap: 8px; margin: 12px 16px 0; justify-content: center;
+    }
+    .stat-pill {
+      flex: 1; text-align: center; padding: 10px 8px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 14px; box-shadow: var(--shadow-hard);
+    }
+    .stat-pill-value {
+      font-family: var(--disp); font-size: 16px; font-weight: 800;
+      color: var(--text-primary); line-height: 1.2;
+    }
+    .stat-pill-label {
+      font-size: 11px; color: var(--text-hint); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .stat-pill { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+    }
+
+    /* ─── Updated at indicator ─── */
+    .updated-at {
+      text-align: center; font-size: 12px; color: var(--text-hint);
+      margin: 8px 16px 0; font-weight: 500;
+    }
+
     /* ─── Action bar ─── */
     .action-bar {
       display: flex; gap: 10px; margin: 14px 16px 0;
@@ -171,8 +232,10 @@
       color: var(--text-primary); cursor: pointer;
       text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
+    .action-btn { position: relative; overflow: hidden; }
     .action-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
-    .action-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--forest); }
+    .action-btn:active { animation: bounce-tap 0.3s ease; box-shadow: 2px 2px 0 var(--forest); }
+    .action-btn .ripple { position: absolute; border-radius: 50%; background: rgba(201,125,89,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
 
     /* ─── Lost banner ─── */
     .lost-banner {
@@ -240,7 +303,7 @@
       box-shadow: var(--shadow-hard);
       transition: transform 0.16s ease, box-shadow 0.16s ease;
     }
-    .section:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-hard-lg); }
+    .section:hover { transform: translate(-3px,-3px) scale(1.01); box-shadow: var(--shadow-hard-lg); }
     .section-header {
       display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
     }
@@ -273,7 +336,9 @@
       width: 48px; height: 48px; border-radius: 24px; background: var(--forest);
       display: flex; align-items: center; justify-content: center;
       font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0;
+      transition: box-shadow 0.3s ease;
     }
+    .contact-avatar:hover { animation: pulse-avatar 1s ease infinite; }
     .contact-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
     .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
     .contact-phone a { color: var(--terracotta); text-decoration: none; }
@@ -288,7 +353,9 @@
       text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
     .call-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--terracotta); }
-    .call-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--terracotta); }
+    .call-btn { position: relative; overflow: hidden; }
+    .call-btn:active { animation: bounce-tap 0.3s ease; box-shadow: 2px 2px 0 var(--terracotta); }
+    .call-btn .ripple, .vet-btn .ripple, .share-btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
 
     /* ─── Vet access ─── */
     .vet-btn {
@@ -340,12 +407,32 @@
       font-weight: 600; display: none;
     }
     .pin-error.visible { display: block; }
+    .pin-error.shake { animation: shake 0.4s ease; }
+    .vet-form input.shake { animation: shake 0.4s ease; border-color: var(--error); }
+    .vet-form input.success { border-color: var(--success); animation: success-pulse 0.6s ease; }
     .medical-badge {
       display: inline-block; background: var(--butter); color: var(--forest);
       font-family: var(--sans); font-size: 10px; font-weight: 700; padding: 5px 12px;
       border-radius: 999px; letter-spacing: 1px; text-transform: uppercase;
       border: 2px solid var(--forest); box-shadow: 3px 3px 0 var(--forest);
       vertical-align: middle;
+    }
+    .health-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      padding: 5px 12px; border-radius: 999px; margin: 4px 4px 4px 0;
+    }
+    .health-badge.vaccins {
+      background: rgba(58,140,92,0.12); color: var(--success);
+      border: 2px solid var(--success);
+    }
+    .health-badge.allergies {
+      background: rgba(217,79,79,0.08); color: var(--error);
+      border: 2px solid var(--error);
+    }
+    @media (prefers-color-scheme: dark) {
+      .health-badge.vaccins { background: rgba(58,140,92,0.15); color: #6BC88E; border-color: rgba(58,140,92,0.5); }
+      .health-badge.allergies { background: rgba(217,79,79,0.12); color: #E87070; border-color: rgba(217,79,79,0.4); }
     }
 
     /* ─── QR + share ─── */
@@ -367,6 +454,21 @@
     .copy-feedback {
       font-size: 12px; color: var(--success); font-weight: 600;
       margin-top: 6px; display: none; text-align: center;
+    }
+    .toast {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--forest); color: var(--cream);
+      padding: 12px 24px; border-radius: 14px;
+      border: 2px solid var(--terracotta);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      font-family: var(--sans); font-size: 14px; font-weight: 700;
+      z-index: 200; pointer-events: none;
+      animation: toast-in 0.3s ease forwards;
+    }
+    .toast.out { animation: toast-out 0.3s ease forwards; }
+    @media (prefers-color-scheme: dark) {
+      .toast { background: #1E4035; border-color: rgba(201,125,89,0.5); }
     }
 
     /* ─── Footer ─── */
@@ -455,6 +557,76 @@
     .section-icon.sitter { background: var(--butter); border: 2px solid var(--forest); border-radius: 12px; }
     .section-icon.events { background: rgba(58,140,92,0.12); border: 2px solid var(--forest); border-radius: 12px; }
 
+    /* ─── Bottom sheet ─── */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 150; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    .bottom-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card-bg); border-radius: 24px 24px 0 0;
+      border-top: 2.5px solid var(--terracotta);
+      padding: 20px 24px calc(24px + env(safe-area-inset-bottom));
+      z-index: 151; transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      max-width: 560px; margin: 0 auto;
+    }
+    .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
+    .bottom-sheet-handle {
+      width: 40px; height: 4px; border-radius: 2px;
+      background: var(--sand); margin: 0 auto 16px;
+    }
+    .bottom-sheet-close {
+      position: absolute; top: 16px; right: 20px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--sand); border: none; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary);
+    }
+
+    /* ─── Back to top ─── */
+    .back-to-top {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--forest); color: var(--cream);
+      border: 2px solid var(--terracotta);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 18px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 90; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(10px);
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .back-to-top:active { animation: bounce-tap 0.3s ease; }
+    @media (prefers-color-scheme: dark) {
+      .back-to-top { background: #1E4035; border-color: rgba(201,125,89,0.5); }
+      .bottom-sheet { background: #1A2E26; border-color: rgba(201,125,89,0.4); }
+      .bottom-sheet-close { background: #2D3E34; }
+      .bottom-sheet-handle { background: #2D3E34; }
+    }
+
+    /* ─── QR trigger button ─── */
+    .qr-trigger-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 14px; box-shadow: var(--shadow-hard);
+      font-family: var(--sans); font-size: 14px; font-weight: 700;
+      color: var(--text-primary); cursor: pointer;
+      margin: 14px 16px 0; max-width: calc(100% - 32px);
+      position: relative; overflow: hidden;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .qr-trigger-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .qr-trigger-btn:active { animation: bounce-tap 0.3s ease; }
+    .qr-trigger-btn .ripple { position: absolute; border-radius: 50%; background: rgba(201,125,89,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
+    @media (prefers-color-scheme: dark) {
+      .qr-trigger-btn { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+    }
+
     /* ─── Dark mode overrides for neo-brut elements ─── */
     @media (prefers-color-scheme: dark) {
       .brand-header { background: linear-gradient(135deg, #0F3327, #1A3D30); border-bottom: 2px solid rgba(201,125,89,0.3); }
@@ -480,8 +652,9 @@
       .portal-footer-logo { color: #EFC98E; }
       .info-value a { color: #D4926A; }
       .contact-phone a { color: #D4926A; }
-      .event-item::before { background: #EFC98E; border-color: rgba(201,125,89,0.4); }
+      .event-icon { border-color: rgba(239,201,142,0.5); }
       .event-item::after { background: rgba(201,125,89,0.25); }
+      .brand-header.scrolled { background: rgba(13,31,24,0.88); border-bottom-color: rgba(201,125,89,0.4); }
       .share-btn.primary { background: var(--terracotta); border-color: rgba(201,125,89,0.5); }
       .share-btn.secondary { background: #1E4035; border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
       .action-btn { border-color: rgba(201,125,89,0.3); box-shadow: 4px 4px 0 rgba(201,125,89,0.15); }
@@ -493,16 +666,17 @@
       .pin-error { background: rgba(217,79,79,0.1); }
     }
     .event-item {
-      padding: 12px 0 12px 20px; border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 0 12px 32px; border-bottom: 1px solid var(--border-subtle);
       position: relative;
     }
-    .event-item::before {
-      content: ''; position: absolute; left: 0; top: 18px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--butter); border: 2px solid var(--forest);
+    .event-icon {
+      position: absolute; left: 0; top: 12px;
+      width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; background: var(--card-bg); z-index: 1;
+      border-radius: 50%; border: 2px solid var(--butter);
     }
     .event-item::after {
-      content: ''; position: absolute; left: 4px; top: 30px;
+      content: ''; position: absolute; left: 10px; top: 36px;
       width: 2px; bottom: 0; background: var(--sand);
     }
     .event-item:last-child { border-bottom: none; }
@@ -513,6 +687,7 @@
   </style>
 </head>
 <body>
+<div class="scroll-progress" id="scroll-progress"></div>
 <div class="container">
 
   <div id="loading-view" class="loading"><div class="spinner"></div></div>
@@ -551,8 +726,11 @@
       </div>
     </div>
 
+    <div class="stat-pills reveal" id="stat-pills" style="display:none"></div>
+    <div class="updated-at reveal" id="updated-at" style="display:none"></div>
+
     <!-- Action bar: share + call -->
-    <div class="action-bar anim-in anim-d1" id="action-bar">
+    <div class="action-bar reveal" id="action-bar">
       <button class="action-btn" id="share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
       <a class="action-btn" id="call-action-btn" style="display:none">&#x1F4DE; Appeler</a>
     </div>
@@ -569,7 +747,7 @@
 
     <div id="sitter-expires" class="sitter-expires" style="display:none"></div>
 
-    <div class="section anim-in anim-d1" id="feeding-section" style="display:none">
+    <div class="section reveal" id="feeding-section" style="display:none">
       <div class="section-header">
         <div class="section-icon sitter">&#x1F372;</div>
         <div class="section-title">Repas</div>
@@ -577,7 +755,7 @@
       <div class="sitter-section-content" id="feeding-content"></div>
     </div>
 
-    <div class="section anim-in anim-d1" id="sitter-notes-section" style="display:none">
+    <div class="section reveal" id="sitter-notes-section" style="display:none">
       <div class="section-header">
         <div class="section-icon sitter">&#x1F4DD;</div>
         <div class="section-title">Consignes</div>
@@ -585,7 +763,7 @@
       <div class="sitter-section-content" id="sitter-notes-content"></div>
     </div>
 
-    <div class="section anim-in anim-d2" id="sitter-health-section" style="display:none">
+    <div class="section reveal" id="sitter-health-section" style="display:none">
       <div class="section-header">
         <div class="section-icon medical">&#x2695;&#xFE0F;</div>
         <div class="section-title">Sant&eacute;</div>
@@ -593,7 +771,7 @@
       <div id="sitter-health-rows"></div>
     </div>
 
-    <div class="section anim-in anim-d2" id="sitter-events-section" style="display:none">
+    <div class="section reveal" id="sitter-events-section" style="display:none">
       <div class="section-header">
         <div class="section-icon events">&#x1F4C5;</div>
         <div class="section-title">&Eacute;v&eacute;nements &agrave; venir</div>
@@ -601,7 +779,7 @@
       <div id="sitter-events-list"></div>
     </div>
 
-    <div class="section anim-in anim-d3" id="sitter-vet-section" style="display:none">
+    <div class="section reveal" id="sitter-vet-section" style="display:none">
       <div class="section-header">
         <div class="section-icon vet">&#x1FA7A;</div>
         <div class="section-title">V&eacute;t&eacute;rinaire</div>
@@ -609,7 +787,7 @@
       <div id="sitter-vet-rows"></div>
     </div>
 
-    <div class="section anim-in anim-d1" id="emergency-section" style="display:none">
+    <div class="section reveal" id="emergency-section" style="display:none">
       <div class="section-header">
         <div class="section-icon emergency">&#x1F4DE;</div>
         <div class="section-title" id="emergency-title">Contact d'urgence</div>
@@ -617,7 +795,7 @@
       <div id="emergency-contact-card"></div>
     </div>
 
-    <div class="section anim-in anim-d2" id="vet-section" style="display:none">
+    <div class="section reveal" id="vet-section" style="display:none">
       <div class="section-header">
         <div class="section-icon vet">&#x1FA7A;</div>
         <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
@@ -634,7 +812,7 @@
       </div>
     </div>
 
-    <div class="section anim-in anim-d3" id="medical-section" style="display:none">
+    <div class="section reveal" id="medical-section" style="display:none">
       <div class="section-header">
         <div class="section-icon medical">&#x2695;&#xFE0F;</div>
         <div class="section-title">Donn&eacute;es m&eacute;dicales</div>
@@ -643,22 +821,28 @@
       <div id="medical-rows"></div>
     </div>
 
-    <div class="section anim-in anim-d3" id="qr-section" style="display:none">
-      <div class="section-header">
-        <div class="section-icon qr">&#x1F517;</div>
-        <div class="section-title">Partager ce profil</div>
-      </div>
-      <div class="qr-inner">
-        <canvas id="qr-canvas"></canvas>
-        <div class="share-actions">
-          <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
-          <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+    <button class="qr-trigger-btn reveal" id="qr-trigger" style="display:none" onclick="openQRSheet()">&#x1F517; Voir le QR &amp; partager</button>
+
+    <!-- Bottom sheet QR -->
+    <div class="bottom-sheet-overlay" id="qr-sheet-overlay" onclick="closeQRSheet()">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="bottom-sheet-handle"></div>
+        <button class="bottom-sheet-close" onclick="closeQRSheet()">&times;</button>
+        <div style="text-align:center; margin-bottom: 12px;">
+          <span class="section-icon qr" style="display:inline-flex; margin-right:8px;">&#x1F517;</span>
+          <span style="font-family:var(--disp); font-size:16px; font-weight:700;">Partager ce profil</span>
         </div>
-        <div class="copy-feedback" id="copy-feedback">&#x2705; Lien copi&eacute; !</div>
+        <div class="qr-inner">
+          <canvas id="qr-canvas"></canvas>
+          <div class="share-actions">
+            <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+            <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="portal-footer anim-in anim-d4">
+    <div class="portal-footer reveal">
       <div class="portal-footer-logo">truffe<span class="dot"></span></div>
       <div class="portal-footer-sub">M&eacute;daillons NFC &middot; <a href="https://truffe.pro">truffe.pro</a></div>
       <div class="portal-footer-badge">Profil prot&eacute;g&eacute; par Truffe</div>
@@ -670,6 +854,8 @@
     <a id="sticky-call-link">&#x1F6A8; Appeler le propri&eacute;taire</a>
   </div>
 </div>
+
+<button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Retour en haut">&uarr;</button>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
@@ -692,7 +878,7 @@
     return null;
   }
 
-  // Profil public par id d'animal (page partageable sans médaillon NFC).
+  // Profil public par id d’animal (page partageable sans médaillon NFC).
   function getPetId() {
     var params = new URLSearchParams(window.location.search);
     if (params.get('pet')) return params.get('pet');
@@ -763,23 +949,75 @@
     }
   };
 
+  // ─── Toast notification ───
+  function showToast(text) {
+    var existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(function() { t.classList.add('out'); }, 1800);
+    setTimeout(function() { t.remove(); }, 2200);
+  }
+
   // ─── Copy link ───
   window.copyLink = function() {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href).then(function() {
-        var fb = document.getElementById('copy-feedback');
-        fb.style.display = 'block';
-        setTimeout(function() { fb.style.display = 'none'; }, 2000);
-      });
+      navigator.clipboard.writeText(window.location.href).then(function() { showToast('✅ Lien copié !'); });
     } else {
       var ta = document.createElement('textarea');
       ta.value = window.location.href; document.body.appendChild(ta);
       ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      var fb = document.getElementById('copy-feedback');
-      fb.style.display = 'block';
-      setTimeout(function() { fb.style.display = 'none'; }, 2000);
+      showToast('✅ Lien copié !');
     }
   };
+
+  // ─── Bottom sheet QR ───
+  window.openQRSheet = function() {
+    document.getElementById('qr-sheet-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeQRSheet = function() {
+    document.getElementById('qr-sheet-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  // ─── Ripple effect ───
+  function addRipple(e) {
+    var btn = e.currentTarget;
+    var rect = btn.getBoundingClientRect();
+    var r = document.createElement('span');
+    r.className = 'ripple';
+    var size = Math.max(rect.width, rect.height);
+    r.style.width = r.style.height = size + 'px';
+    r.style.left = (e.clientX - rect.left - size/2) + 'px';
+    r.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(r);
+    setTimeout(function() { r.remove(); }, 600);
+  }
+
+  // ─── Calculate age ───
+  function calcAge(birthdate) {
+    if (!birthdate) return null;
+    var b = new Date(birthdate);
+    var now = new Date();
+    var months = (now.getFullYear() - b.getFullYear()) * 12 + (now.getMonth() - b.getMonth());
+    if (months < 12) return months + ' mois';
+    var years = Math.floor(months / 12);
+    return years + ' an' + (years > 1 ? 's' : '');
+  }
+
+  // ─── Time ago ───
+  function timeAgo(dateStr) {
+    if (!dateStr) return null;
+    var d = new Date(dateStr);
+    var now = new Date();
+    var diff = Math.floor((now - d) / 86400000);
+    if (diff === 0) return "Mis à jour aujourd'hui";
+    if (diff === 1) return 'Mis à jour hier';
+    return 'Mis à jour il y a ' + diff + ' jours';
+  }
 
   // ─── Render profile ───
   function renderProfile(p) {
@@ -819,6 +1057,28 @@
     if (p.color) metaParts.push(p.color);
     document.getElementById('pet-meta').textContent = metaParts.join(' · ');
 
+    // Stat pills
+    var pills = [];
+    var age = calcAge(p.birthdate);
+    if (age) pills.push({ value: age, label: 'Âge' });
+    if (p.weight_kg) pills.push({ value: p.weight_kg + ' kg', label: 'Poids' });
+    if (p.breed) pills.push({ value: p.breed, label: 'Race' });
+    if (pills.length > 0) {
+      var pillsHtml = '';
+      for (var pi = 0; pi < pills.length; pi++) {
+        pillsHtml += '<div class="stat-pill"><div class="stat-pill-value">' + esc(pills[pi].value) + '</div><div class="stat-pill-label">' + esc(pills[pi].label) + '</div></div>';
+      }
+      document.getElementById('stat-pills').innerHTML = pillsHtml;
+      show('stat-pills', 'flex');
+    }
+
+    // Updated at
+    var updatedText = timeAgo(p.updated_at);
+    if (updatedText) {
+      document.getElementById('updated-at').textContent = updatedText;
+      show('updated-at');
+    }
+
     // Action bar
     if (navigator.share) {
       document.getElementById('share-btn').style.display = 'flex';
@@ -833,7 +1093,7 @@
 
     // Lost mode
     if (p.is_lost) {
-      document.getElementById('lost-banner').textContent = '\u26a0 ANIMAL PERDU \u2014 MERCI DE CONTACTER LE PROPRI\u00c9TAIRE';
+      document.getElementById('lost-banner').textContent = '⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';
       show('lost-banner');
       if (p.lost_message) {
         document.getElementById('lost-message').textContent = p.lost_message;
@@ -860,9 +1120,9 @@
       if (p.emergency_contact_name) html += '<div class="contact-name">' + esc(p.emergency_contact_name) + '</div>';
       if (p.emergency_contact_phone) html += '<div class="contact-phone"><a href="tel:' + esc(p.emergency_contact_phone) + '">' + esc(p.emergency_contact_phone) + '</a></div>';
       html += '</div></div>';
-      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">\ud83d\udcde Appeler</a>';
+      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
       document.getElementById('emergency-contact-card').innerHTML = html;
-      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propri\u00e9taire';
+      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propriétaire';
       show('emergency-section');
     }
 
@@ -872,6 +1132,9 @@
     hide('loading-view');
     show('profile-view');
     generateQR();
+    initRevealObserver();
+    initScrollListeners();
+    initRipple();
   }
 
   // ─── Render sitter-specific sections ───
@@ -908,8 +1171,18 @@
       show('sitter-notes-section');
     }
 
+    // Health badges
+    var badges = '';
+    if (p.medical_notes && p.medical_notes.toLowerCase().indexOf('vaccins à jour') !== -1) {
+      badges += '<span class="health-badge vaccins">✅ Vaccins à jour</span>';
+    }
+    if (p.allergies) {
+      badges += '<span class="health-badge allergies">⚠ Allergies</span>';
+    }
+
     // Health info (allergies, medical_notes, weight, birthdate)
     var healthRows = '';
+    if (badges) healthRows += '<div style="margin-bottom:12px">' + badges + '</div>';
     healthRows += infoRow('Poids', p.weight_kg ? p.weight_kg + ' kg' : null);
     healthRows += infoRow('Date de naissance', formatDate(p.birthdate));
     healthRows += infoRow('Allergies', p.allergies);
@@ -933,9 +1206,12 @@
     if (events.length > 0) {
       var evHtml = '';
       var eventTypeLabels = { vet_visit: 'Visite véto', medication: 'Médicament', grooming: 'Toilettage', other: 'Autre' };
+      var eventTypeIcons = { vet_visit: '💉', medication: '💊', grooming: '✂️', other: '📋' };
       for (var i = 0; i < events.length; i++) {
         var ev = events[i];
+        var icon = eventTypeIcons[ev.event_type] || eventTypeIcons.other;
         evHtml += '<div class="event-item">';
+        evHtml += '<div class="event-icon">' + icon + '</div>';
         evHtml += '<div class="event-title">' + esc(ev.title) + '</div>';
         evHtml += '<div class="event-meta">' + esc(eventTypeLabels[ev.event_type] || ev.event_type) + ' · ' + (formatDate(ev.event_date) || '') + '</div>';
         if (ev.notes) evHtml += '<div class="event-notes">' + esc(ev.notes) + '</div>';
@@ -948,7 +1224,7 @@
     // Hide sections not relevant to sitter
     hide('vet-section');
     hide('geoloc-banner');
-    hide('qr-section');
+    hide('qr-trigger');
   }
 
   function renderMedical(v) {
@@ -972,7 +1248,7 @@
       QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, {
         width: 140, margin: 2, color: { dark: '#0F3327', light: '#FFFFFF' }
       });
-      show('qr-section');
+      show('qr-trigger');
     } catch(e) {}
   }
 
@@ -996,12 +1272,17 @@
         document.getElementById('pin-error').classList.add('visible');
         document.getElementById('pin-input').disabled = true;
       } else if (res.data && !res.data.error) {
-        renderMedical(res.data);
+        document.getElementById('pin-input').classList.add('success');
+        setTimeout(function() { renderMedical(res.data); }, 400);
       } else {
         document.getElementById('pin-error').textContent = 'Code incorrect. Réessayez.';
         document.getElementById('pin-error').classList.add('visible');
-        document.getElementById('pin-input').value = '';
-        document.getElementById('pin-input').focus();
+        var pinInp = document.getElementById('pin-input');
+        pinInp.classList.add('shake');
+        document.getElementById('pin-error').classList.add('shake');
+        setTimeout(function() { pinInp.classList.remove('shake'); document.getElementById('pin-error').classList.remove('shake'); }, 500);
+        pinInp.value = '';
+        pinInp.focus();
       }
     } catch(e) {
       btn.classList.remove('loading'); btn.disabled = false;
@@ -1012,6 +1293,70 @@
 
   var inp = document.getElementById('pin-input');
   if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
+
+  // ─── IntersectionObserver reveal ───
+  function initRevealObserver() {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: show all
+      for (var i = 0; i < els.length; i++) els[i].classList.add('visible');
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    for (var i = 0; i < els.length; i++) obs.observe(els[i]);
+  }
+
+  // ─── Scroll listeners (sticky header, progress bar, back-to-top) ───
+  function initScrollListeners() {
+    var header = document.querySelector('.brand-header');
+    var progress = document.getElementById('scroll-progress');
+    var btt = document.getElementById('back-to-top');
+    var ticking = false;
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          var scrollY = window.scrollY || window.pageYOffset;
+          var docH = document.documentElement.scrollHeight - window.innerHeight;
+          var pct = docH > 0 ? Math.min((scrollY / docH) * 100, 100) : 0;
+
+          // Scroll progress bar
+          progress.style.width = pct + '%';
+
+          // Sticky header shrink
+          if (scrollY > 60) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+
+          // Back to top
+          if (scrollY > 300) btt.classList.add('visible');
+          else btt.classList.remove('visible');
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+  }
+
+  // ─── Ripple on interactive buttons ───
+  function initRipple() {
+    var btns = document.querySelectorAll('.action-btn, .call-btn, .vet-btn, .vet-submit, .share-btn, .qr-trigger-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].style.position = 'relative';
+      btns[i].style.overflow = 'hidden';
+      btns[i].addEventListener('click', addRipple);
+    }
+  }
 
   // ─── Init ───
   async function init() {
