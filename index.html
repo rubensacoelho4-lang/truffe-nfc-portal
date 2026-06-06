@@ -49,17 +49,18 @@
         --card-bg: #1A2E26;
         --body-bg: #0D1F18;
         --text-primary: #E8DED6;
-        --text-secondary: #8FA99D;
+        --text-secondary: #A8BFB2;
         --text-hint: #5E7A6E;
-        --border-card: 2.5px solid #2A4A3C;
-        --border-subtle: rgba(242,233,226,0.06);
-        --shadow-card: 4px 4px 0 rgba(0,0,0,0.3);
-        --shadow-hard: 4px 4px 0 rgba(0,0,0,0.3);
-        --shadow-hard-lg: 6px 6px 0 rgba(0,0,0,0.4);
+        --border-card: 2.5px solid rgba(201,125,89,0.35);
+        --border-subtle: rgba(239,201,142,0.08);
+        --shadow-card: 4px 4px 0 rgba(201,125,89,0.2);
+        --shadow-hard: 4px 4px 0 rgba(201,125,89,0.2);
+        --shadow-hard-lg: 6px 6px 0 rgba(201,125,89,0.25);
         --sand-dark: #1A2E26;
-        --butter: #D4A96A;
-        --sand: #2A3E34;
+        --butter: #EFC98E;
+        --sand: #2D3E34;
         --paper: #0D1F18;
+        --terracotta: #D4926A;
       }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -456,26 +457,40 @@
 
     /* ─── Dark mode overrides for neo-brut elements ─── */
     @media (prefers-color-scheme: dark) {
-      .hero { border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(0,0,0,0.3); }
-      .hero-badge-nfc, .sitter-badge { background: #D4A96A; color: #0D1F18; border-color: #2A4A3C; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+      .brand-header { background: linear-gradient(135deg, #0F3327, #1A3D30); border-bottom: 2px solid rgba(201,125,89,0.3); }
+      .hero { border-color: rgba(201,125,89,0.4); box-shadow: 5px 5px 0 rgba(201,125,89,0.2); }
+      .hero-badge-nfc, .sitter-badge { background: #EFC98E; color: #0D1F18; border-color: rgba(201,125,89,0.5); box-shadow: 3px 3px 0 rgba(201,125,89,0.25); }
       .section-icon.emergency, .section-icon.vet, .section-icon.medical,
-      .section-icon.qr, .section-icon.sitter, .section-icon.events { border-color: #2A4A3C; }
-      .section-icon.emergency, .section-icon.sitter { background: rgba(212,169,106,0.2); }
-      .section-icon.vet, .section-icon.qr { background: rgba(42,62,52,0.5); }
-      .contact-card { background: rgba(42,62,52,0.3); border-color: #2A4A3C; }
-      .sitter-expires { background: rgba(212,169,106,0.15); border-color: #2A4A3C; color: #D4A96A; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
-      .call-btn { background: #2A4A3C; border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(201,125,89,0.4); }
-      .call-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.4); }
-      .vet-btn { background: #2A4A3C; border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(201,125,89,0.4); }
-      .vet-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.4); }
-      .medical-badge { background: rgba(212,169,106,0.2); color: #D4A96A; border-color: #2A4A3C; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
-      .portal-footer-badge { background: rgba(212,169,106,0.15); color: #D4A96A; border-color: #2A4A3C; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
-      .event-item::before { background: #D4A96A; border-color: #2A4A3C; }
-      .event-item::after { background: #2A4A3C; }
-      .share-btn.secondary { background: #1A2E26; }
-      .lost-banner { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
-      .lost-message { background: rgba(217,79,79,0.1); border-color: rgba(217,79,79,0.4); }
-      .sticky-call a { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+      .section-icon.qr, .section-icon.sitter, .section-icon.events { border-color: rgba(201,125,89,0.35); }
+      .section-icon.emergency, .section-icon.sitter { background: rgba(239,201,142,0.18); }
+      .section-icon.vet, .section-icon.qr { background: rgba(201,125,89,0.12); }
+      .section-icon.medical, .section-icon.events { background: rgba(58,140,92,0.15); }
+      .contact-card { background: rgba(201,125,89,0.06); border-color: rgba(201,125,89,0.25); }
+      .contact-avatar { background: var(--terracotta); }
+      .sitter-expires { background: rgba(239,201,142,0.12); border-color: rgba(201,125,89,0.35); color: #EFC98E; box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .call-btn { background: var(--terracotta); border-color: rgba(201,125,89,0.5); color: #fff; box-shadow: 4px 4px 0 rgba(201,125,89,0.25); }
+      .call-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.3); }
+      .vet-btn { background: #1E4035; border-color: rgba(201,125,89,0.35); box-shadow: 4px 4px 0 rgba(201,125,89,0.2); }
+      .vet-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.25); }
+      .vet-submit { border-color: rgba(201,125,89,0.4); box-shadow: 3px 3px 0 rgba(201,125,89,0.2); }
+      .vet-form input { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .vet-form input:focus { border-color: var(--terracotta); }
+      .medical-badge { background: rgba(239,201,142,0.15); color: #EFC98E; border-color: rgba(201,125,89,0.35); box-shadow: 2px 2px 0 rgba(201,125,89,0.15); }
+      .portal-footer-badge { background: rgba(239,201,142,0.1); color: #EFC98E; border-color: rgba(201,125,89,0.3); box-shadow: 2px 2px 0 rgba(201,125,89,0.15); }
+      .portal-footer-logo { color: #EFC98E; }
+      .info-value a { color: #D4926A; }
+      .contact-phone a { color: #D4926A; }
+      .event-item::before { background: #EFC98E; border-color: rgba(201,125,89,0.4); }
+      .event-item::after { background: rgba(201,125,89,0.25); }
+      .share-btn.primary { background: var(--terracotta); border-color: rgba(201,125,89,0.5); }
+      .share-btn.secondary { background: #1E4035; border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .action-btn { border-color: rgba(201,125,89,0.3); box-shadow: 4px 4px 0 rgba(201,125,89,0.15); }
+      .action-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.2); }
+      .geoloc-banner { border-color: rgba(201,125,89,0.3); box-shadow: 4px 4px 0 rgba(201,125,89,0.15); }
+      .lost-banner { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(139,32,32,0.4); }
+      .lost-message { background: rgba(217,79,79,0.08); border-color: rgba(217,79,79,0.35); }
+      .sticky-call a { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(139,32,32,0.4); }
+      .pin-error { background: rgba(217,79,79,0.1); }
     }
     .event-item {
       padding: 12px 0 12px 20px; border-bottom: 1px solid var(--border-subtle);
@@ -818,7 +833,7 @@
 
     // Lost mode
     if (p.is_lost) {
-      document.getElementById('lost-banner').textContent = '⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';
+      document.getElementById('lost-banner').textContent = '\u26a0 ANIMAL PERDU \u2014 MERCI DE CONTACTER LE PROPRI\u00c9TAIRE';
       show('lost-banner');
       if (p.lost_message) {
         document.getElementById('lost-message').textContent = p.lost_message;
@@ -845,9 +860,9 @@
       if (p.emergency_contact_name) html += '<div class="contact-name">' + esc(p.emergency_contact_name) + '</div>';
       if (p.emergency_contact_phone) html += '<div class="contact-phone"><a href="tel:' + esc(p.emergency_contact_phone) + '">' + esc(p.emergency_contact_phone) + '</a></div>';
       html += '</div></div>';
-      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
+      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">\ud83d\udcde Appeler</a>';
       document.getElementById('emergency-contact-card').innerHTML = html;
-      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propriétaire';
+      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propri\u00e9taire';
       show('emergency-section');
     }
 
