@@ -12,27 +12,37 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230F3327' width='100' height='100' rx='20'/><text y='.9em' x='5' font-size='80'>🐾</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="data:application/json,{%22name%22:%22Truffe%22,%22short_name%22:%22Truffe%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23F2E9E2%22,%22theme_color%22:%22%230F3327%22}">
   <style>
     :root {
       --forest: #0F3327;
-      --forest-mid: #4A6B5E;
+      --forest-mid: #2C5446;
       --forest-light: #8FA99D;
       --terracotta: #C97D59;
+      --terracotta-deep: #B0623C;
       --cream: #F2E9E2;
+      --paper: #F4ECE3;
+      --sand: #E7D9C8;
       --sand-dark: #E5D9CC;
+      --butter: #EFC98E;
+      --ink: #16271F;
       --white: #FFFFFF;
       --error: #D94F4F;
       --error-light: #FDEAEA;
       --success: #3A8C5C;
+      --disp: 'Bricolage Grotesque', sans-serif;
+      --sans: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --shadow-hard: 5px 5px 0 var(--forest);
+      --shadow-hard-lg: 8px 8px 0 var(--forest);
       --card-bg: var(--white);
-      --body-bg: var(--cream);
-      --text-primary: var(--forest);
+      --body-bg: var(--paper);
+      --text-primary: var(--ink);
       --text-secondary: var(--forest-mid);
       --text-hint: var(--forest-light);
+      --border-card: 2.5px solid var(--forest);
       --border-subtle: rgba(15,51,39,0.04);
-      --shadow-card: 0 2px 12px rgba(15,51,39,0.06);
+      --shadow-card: var(--shadow-hard);
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -41,144 +51,1008 @@
         --text-primary: #E8DED6;
         --text-secondary: #8FA99D;
         --text-hint: #5E7A6E;
+        --border-card: 2.5px solid #2A4A3C;
         --border-subtle: rgba(242,233,226,0.06);
-        --shadow-card: 0 2px 12px rgba(0,0,0,0.2);
+        --shadow-card: 4px 4px 0 rgba(0,0,0,0.3);
+        --shadow-hard: 4px 4px 0 rgba(0,0,0,0.3);
+        --shadow-hard-lg: 6px 6px 0 rgba(0,0,0,0.4);
         --sand-dark: #1A2E26;
+        --butter: #D4A96A;
+        --sand: #2A3E34;
+        --paper: #0D1F18;
       }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: var(--sans);
       background: var(--body-bg); color: var(--text-primary);
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: 440px; margin: 0 auto; padding: 0 0 32px; }
+    .container { max-width: 560px; margin: 0 auto; padding: 0 0 32px; }
+
+    /* ─── Animations ─── */
     @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
     @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
     .anim-in { animation: fade-up 0.5s ease both; }
-    .anim-d1 { animation-delay: 0.1s; } .anim-d2 { animation-delay: 0.2s; } .anim-d3 { animation-delay: 0.3s; } .anim-d4 { animation-delay: 0.4s; }
-    .brand-header { display: flex; align-items: center; justify-content: center; padding: 14px 16px; background: var(--forest); }
-    .brand-header-logo { font-family: 'Quicksand', sans-serif; font-size: 16px; font-weight: 700; color: var(--cream); letter-spacing: 0.5px; position: relative; }
-    .brand-header-logo .dot { position: absolute; top: -1px; right: -3px; width: 5px; height: 5px; border-radius: 50%; background: var(--terracotta); }
-    .hero { width: calc(100% - 32px); margin: 16px auto 0; height: 360px; background: var(--sand-dark); position: relative; overflow: hidden; border-radius: 24px; box-shadow: 0 8px 32px rgba(15,51,39,0.15); }
-    .hero img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease; }
+    .anim-d1 { animation-delay: 0.1s; }
+    .anim-d2 { animation-delay: 0.2s; }
+    .anim-d3 { animation-delay: 0.3s; }
+    .anim-d4 { animation-delay: 0.4s; }
+
+    /* ─── Brand header ─── */
+    .brand-header {
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px 16px; background: var(--forest);
+    }
+    .brand-header-logo {
+      font-family: var(--disp);
+      font-size: 18px; font-weight: 800; color: var(--cream);
+      letter-spacing: 0.5px; position: relative;
+    }
+    .brand-header-logo .dot {
+      position: absolute; top: -1px; right: -3px;
+      width: 5px; height: 5px; border-radius: 50%; background: var(--terracotta);
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      width: calc(100% - 32px); margin: 16px auto 0;
+      height: 360px; background: var(--sand-dark);
+      position: relative; overflow: hidden;
+      border-radius: 24px;
+      border: 2.5px solid var(--forest);
+      box-shadow: 6px 6px 0 var(--forest);
+    }
+    .hero img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
     .hero img.loaded { opacity: 1; }
-    .hero-skeleton { position: absolute; inset: 0; background: linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%); background-size: 400px 100%; animation: shimmer 1.5s infinite linear; }
-    .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(to top, rgba(15,51,39,0.75), transparent); pointer-events: none; border-radius: 0 0 24px 24px; }
-    .hero-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 90px; background: linear-gradient(145deg, var(--forest) 0%, #1A4A3A 100%); }
-    .hero-name-overlay { position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 2; }
-    .hero-name-overlay .name { font-size: 34px; font-weight: 700; color: #fff; line-height: 1.1; letter-spacing: -0.5px; text-shadow: 0 2px 16px rgba(0,0,0,0.3); }
-    .hero-name-overlay .meta { font-size: 14px; color: rgba(255,255,255,0.85); margin-top: 6px; font-weight: 600; text-shadow: 0 1px 6px rgba(0,0,0,0.2); }
-    .hero-badge-nfc { position: absolute; top: 16px; right: 16px; z-index: 2; background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
-    .hero-badge-nfc::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #6FCF7C; animation: pulse-dot 2s infinite; }
-    .action-bar { display: flex; gap: 10px; margin: 14px 16px 0; }
-    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 12px; border-radius: 14px; background: var(--card-bg); border: none; box-shadow: var(--shadow-card); font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-primary); cursor: pointer; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; }
-    .action-btn:active { transform: scale(0.97); }
-    .lost-banner { background: var(--error); color: #fff; padding: 14px 20px; text-align: center; font-weight: 700; font-size: 14px; letter-spacing: 0.8px; animation: pulse-lost 2s infinite; margin: 14px 16px 0; border-radius: 14px; }
-    .lost-message { background: var(--error-light); color: var(--error); padding: 14px 18px; font-size: 14px; line-height: 1.6; border-left: 4px solid var(--error); margin: 10px 16px 0; border-radius: 0 14px 14px 0; }
-    .sticky-call { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(242,233,226,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(15,51,39,0.06); z-index: 50; display: none; }
-    @media (prefers-color-scheme: dark) { .sticky-call { background: rgba(13,31,24,0.92); } }
-    .sticky-call a { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 440px; margin: 0 auto; padding: 16px; background: var(--error); color: #fff; border-radius: 16px; font-size: 16px; font-weight: 700; text-decoration: none; font-family: inherit; box-shadow: 0 4px 20px rgba(217,79,79,0.3); }
-    .geoloc-banner { margin: 14px 16px 0; padding: 14px 16px; background: rgba(201,125,89,0.08); border-radius: 14px; display: none; text-align: center; }
+    .hero-skeleton {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%);
+      background-size: 400px 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to top, rgba(15,51,39,0.75), transparent);
+      pointer-events: none; border-radius: 0 0 24px 24px;
+    }
+    .hero-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 90px;
+      background: linear-gradient(145deg, var(--forest) 0%, #1A4A3A 100%);
+    }
+    .hero-name-overlay {
+      position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 2;
+    }
+    .hero-name-overlay .name {
+      font-family: var(--disp);
+      font-size: 36px; font-weight: 800; color: #fff;
+      line-height: 1.1; letter-spacing: -0.02em;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .hero-name-overlay .meta {
+      font-size: 14px; color: rgba(255,255,255,0.85);
+      margin-top: 6px; font-weight: 600;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.2);
+    }
+    .hero-badge-nfc {
+      position: absolute; top: 16px; right: 16px; z-index: 2;
+      background: var(--butter); color: var(--forest);
+      border: 2.5px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 6px 14px; border-radius: 999px;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .hero-badge-nfc::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: #3A8C5C; animation: pulse-dot 2s infinite;
+    }
+
+    /* ─── Action bar ─── */
+    .action-bar {
+      display: flex; gap: 10px; margin: 14px 16px 0;
+    }
+    .action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 14px 12px; border-radius: 14px;
+      background: var(--card-bg); border: var(--border-card);
+      box-shadow: var(--shadow-hard);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
+      color: var(--text-primary); cursor: pointer;
+      text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .action-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .action-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--forest); }
+
+    /* ─── Lost banner ─── */
+    .lost-banner {
+      background: var(--error); color: #fff;
+      padding: 14px 20px; text-align: center;
+      font-family: var(--disp); font-weight: 800; font-size: 14px; letter-spacing: 0.8px;
+      animation: pulse-lost 2s infinite;
+      margin: 14px 16px 0; border-radius: 14px;
+      border: 2.5px solid #A03030; box-shadow: 4px 4px 0 #A03030;
+    }
+    .lost-message {
+      background: var(--error-light); color: var(--error);
+      padding: 14px 18px; font-size: 14px; line-height: 1.6;
+      border: 2px solid var(--error);
+      margin: 10px 16px 0; border-radius: 14px;
+    }
+    .sticky-call {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(242,233,226,0.92); backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(15,51,39,0.06);
+      z-index: 50; display: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sticky-call { background: rgba(13,31,24,0.92); }
+    }
+    .sticky-call a {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      max-width: 560px; margin: 0 auto; padding: 16px;
+      background: var(--error); color: #fff;
+      border: 2.5px solid #A03030; border-radius: 16px;
+      box-shadow: 4px 4px 0 #A03030;
+      font-family: var(--disp); font-size: 16px; font-weight: 800;
+      text-decoration: none;
+    }
+
+    /* ─── Geoloc consent ─── */
+    .geoloc-banner {
+      margin: 14px 16px 0; padding: 16px 18px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 18px; box-shadow: var(--shadow-hard);
+      display: none; text-align: center;
+    }
     .geoloc-banner p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
-    .geoloc-banner button { padding: 10px 20px; border-radius: 10px; border: none; background: var(--terracotta); color: #fff; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; margin: 0 4px; }
-    .geoloc-banner .geoloc-dismiss { background: transparent; color: var(--text-hint); }
-    .section { background: var(--card-bg); border-radius: 20px; margin: 14px 16px; padding: 20px; box-shadow: var(--shadow-card); }
-    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .section-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .section-icon.emergency { background: rgba(201,125,89,0.1); } .section-icon.vet { background: rgba(15,51,39,0.06); } .section-icon.medical { background: rgba(58,140,92,0.1); } .section-icon.qr { background: rgba(143,169,157,0.12); }
-    .section-title { font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; }
-    .info-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+    .geoloc-banner button {
+      padding: 10px 20px; border-radius: 12px;
+      border: 2px solid var(--forest);
+      background: var(--terracotta); color: #fff;
+      box-shadow: 3px 3px 0 var(--forest);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
+      cursor: pointer; margin: 0 4px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .geoloc-banner button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--forest); }
+    .geoloc-banner .geoloc-dismiss {
+      background: transparent; color: var(--text-hint);
+    }
+
+    /* ─── Sections ─── */
+    .section {
+      background: var(--card-bg); border-radius: 24px;
+      margin: 14px 16px; padding: 22px;
+      border: var(--border-card);
+      box-shadow: var(--shadow-hard);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .section:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-hard-lg); }
+    .section-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .section-icon.emergency { background: var(--butter); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.vet { background: var(--sand); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.medical { background: rgba(58,140,92,0.12); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.qr { background: var(--sand); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-title { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--text-primary); flex: 1; }
+    .info-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
+    }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: 14px; color: var(--text-secondary); } .info-value { font-size: 14px; color: var(--text-primary); font-weight: 600; text-align: right; } .info-value a { color: var(--terracotta); text-decoration: none; font-weight: 700; }
-    .contact-card { display: flex; align-items: center; gap: 14px; background: var(--border-subtle); border-radius: 16px; padding: 16px; }
-    .contact-avatar { width: 48px; height: 48px; border-radius: 24px; background: var(--forest); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0; }
-    .contact-name { font-size: 15px; font-weight: 700; color: var(--text-primary); } .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; } .contact-phone a { color: var(--terracotta); text-decoration: none; }
-    .call-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding: 14px; background: var(--terracotta); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%; text-decoration: none; transition: transform 0.15s; } .call-btn:active { transform: scale(0.97); }
-    .vet-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 15px; background: var(--forest); color: var(--cream); border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform 0.15s; } .vet-btn:active { transform: scale(0.97); }
-    .vet-form { margin-top: 14px; display: none; } .vet-form.visible { display: block; }
-    .vet-form input { width: 100%; padding: 14px; border: 2px solid var(--sand-dark); border-radius: 14px; font-size: 22px; text-align: center; letter-spacing: 10px; color: var(--text-primary); background: var(--body-bg); outline: none; font-family: inherit; font-weight: 700; } .vet-form input:focus { border-color: var(--terracotta); }
-    .vet-submit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 14px; background: var(--terracotta); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; } .vet-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    .vet-submit .spinner-sm { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; } .vet-submit.loading .spinner-sm { display: block; } .vet-submit.loading .submit-text { display: none; }
+    .info-label { font-size: 14px; color: var(--text-secondary); }
+    .info-value { font-size: 14px; color: var(--text-primary); font-weight: 600; text-align: right; }
+    .info-value a { color: var(--terracotta); text-decoration: none; font-weight: 700; }
+
+    /* ─── Contact card ─── */
+    .contact-card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--paper); border: 2px solid var(--sand);
+      border-radius: 16px; padding: 16px;
+    }
+    .contact-avatar {
+      width: 48px; height: 48px; border-radius: 24px; background: var(--forest);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0;
+    }
+    .contact-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
+    .contact-phone a { color: var(--terracotta); text-decoration: none; }
+    .call-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 14px; padding: 15px;
+      background: var(--forest); color: var(--cream);
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: 5px 5px 0 var(--terracotta);
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: var(--sans); width: 100%;
+      text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .call-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--terracotta); }
+    .call-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--terracotta); }
+
+    /* ─── Vet access ─── */
+    .vet-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px;
+      background: var(--forest); color: var(--cream);
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: 5px 5px 0 var(--terracotta);
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: var(--sans); transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .vet-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--terracotta); }
+    .vet-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--terracotta); }
+    .vet-form { margin-top: 14px; display: none; }
+    .vet-form.visible { display: block; }
+    .vet-form input {
+      width: 100%; padding: 14px;
+      border: 2.5px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      font-size: 22px; text-align: center; letter-spacing: 10px;
+      color: var(--text-primary); background: var(--card-bg);
+      outline: none; font-family: var(--sans); font-weight: 700;
+      autocomplete: off; transition: box-shadow 0.14s ease;
+    }
+    .vet-form input:focus { box-shadow: var(--shadow-hard-lg); border-color: var(--terracotta); }
+    .vet-submit {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 10px; padding: 14px;
+      background: var(--terracotta); color: #fff;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.2s;
+    }
+    .vet-submit:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .vet-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .vet-submit .spinner-sm {
+      width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .vet-submit.loading .spinner-sm { display: block; }
+    .vet-submit.loading .submit-text { display: none; }
     .vet-hint { font-size: 12px; color: var(--text-hint); margin-top: 10px; text-align: center; }
-    .pin-error { background: var(--error-light); color: var(--error); padding: 12px; border-radius: 12px; font-size: 14px; text-align: center; margin-bottom: 14px; font-weight: 600; display: none; } .pin-error.visible { display: block; }
-    .medical-badge { display: inline-block; background: var(--success); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.5px; vertical-align: middle; }
-    .qr-inner { text-align: center; } .qr-inner canvas { margin: 0 auto 12px; border-radius: 8px; }
+    .pin-error {
+      background: var(--error-light); color: var(--error);
+      padding: 12px; border-radius: 12px;
+      font-size: 14px; text-align: center; margin-bottom: 14px;
+      font-weight: 600; display: none;
+    }
+    .pin-error.visible { display: block; }
+    .medical-badge {
+      display: inline-block; background: var(--butter); color: var(--forest);
+      font-family: var(--sans); font-size: 10px; font-weight: 700; padding: 5px 12px;
+      border-radius: 999px; letter-spacing: 1px; text-transform: uppercase;
+      border: 2px solid var(--forest); box-shadow: 3px 3px 0 var(--forest);
+      vertical-align: middle;
+    }
+
+    /* ─── QR + share ─── */
+    .qr-inner { text-align: center; }
+    .qr-inner canvas { margin: 0 auto 12px; border-radius: 8px; }
     .share-actions { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
-    .share-btn { padding: 10px 18px; border-radius: 10px; border: none; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform 0.15s; } .share-btn:active { transform: scale(0.96); } .share-btn.primary { background: var(--terracotta); color: #fff; } .share-btn.secondary { background: var(--border-subtle); color: var(--text-primary); }
-    .copy-feedback { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 6px; display: none; text-align: center; }
+    .share-btn {
+      padding: 10px 18px; border-radius: 12px;
+      border: 2px solid var(--forest);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      box-shadow: 3px 3px 0 var(--forest);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .share-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--forest); }
+    .share-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--forest); }
+    .share-btn.primary { background: var(--terracotta); color: #fff; }
+    .share-btn.secondary { background: var(--paper); color: var(--text-primary); }
+    .copy-feedback {
+      font-size: 12px; color: var(--success); font-weight: 600;
+      margin-top: 6px; display: none; text-align: center;
+    }
+
+    /* ─── Footer ─── */
     .portal-footer { text-align: center; padding: 28px 16px 20px; }
-    .portal-footer-logo { font-family: 'Quicksand', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.5px; display: inline-block; position: relative; }
-    .portal-footer-logo .dot { position: absolute; top: 0; right: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta); }
-    .portal-footer-sub { font-size: 12px; color: var(--text-hint); margin-top: 4px; } .portal-footer-sub a { color: var(--terracotta); text-decoration: none; font-weight: 600; }
-    .portal-footer-badge { display: inline-block; margin-top: 12px; padding: 6px 16px; border-radius: 20px; background: var(--border-subtle); font-size: 11px; font-weight: 600; color: var(--text-secondary); }
-    .not-found { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center; } .not-found-emoji { font-size: 64px; margin-bottom: 20px; } .not-found h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; } .not-found p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-bottom: 28px; } .not-found a { display: inline-block; padding: 14px 28px; background: var(--terracotta); color: #fff; border-radius: 14px; text-decoration: none; font-weight: 700; }
-    .error-view { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center; } .error-view p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-top: 14px; } .error-view button { margin-top: 24px; padding: 14px 28px; background: var(--terracotta); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .portal-footer-logo {
+      font-family: var(--disp);
+      font-size: 24px; font-weight: 800; color: var(--text-primary);
+      letter-spacing: -0.02em; display: inline-block; position: relative;
+    }
+    .portal-footer-logo .dot {
+      position: absolute; top: 0; right: -4px;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta);
+    }
+    .portal-footer-sub { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+    .portal-footer-sub a { color: var(--terracotta); text-decoration: none; font-weight: 600; }
+    .portal-footer-badge {
+      display: inline-block; margin-top: 12px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--butter); color: var(--forest);
+      border: 2px solid var(--forest); box-shadow: 3px 3px 0 var(--forest);
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── States ─── */
+    .not-found {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
+    }
+    .not-found-emoji { font-size: 64px; margin-bottom: 20px; }
+    .not-found h1 { font-family: var(--disp); font-size: 26px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; }
+    .not-found p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-bottom: 28px; }
+    .not-found a {
+      display: inline-block; padding: 14px 28px;
+      background: var(--terracotta); color: #fff;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      text-decoration: none; font-weight: 700; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .not-found a:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .error-view {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
+    }
+    .error-view p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-top: 14px; }
+    .error-view button {
+      margin-top: 24px; padding: 14px 28px;
+      background: var(--terracotta); color: #fff;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .error-view button:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
     .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
-    .spinner { width: 44px; height: 44px; border: 3px solid var(--sand-dark); border-top-color: var(--terracotta); border-radius: 50%; animation: spin 0.8s linear infinite; }
-    #profile-view, #not-found-view, #error-view { display: none; } #loading-view { display: flex; }
-    .sitter-badge { position: absolute; top: 16px; right: 16px; z-index: 2; background: rgba(201,125,89,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.5px; display: none; align-items: center; gap: 6px; }
-    .sitter-expires { text-align: center; font-size: 12px; color: var(--text-hint); margin: 10px 16px 0; font-weight: 600; }
-    .sitter-section-content { font-size: 14px; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; }
-    .section-icon.sitter { background: rgba(201,125,89,0.1); } .section-icon.events { background: rgba(58,140,92,0.1); }
-    .event-item { padding: 10px 0; border-bottom: 1px solid var(--border-subtle); } .event-item:last-child { border-bottom: none; }
-    .event-title { font-size: 14px; font-weight: 700; color: var(--text-primary); } .event-meta { font-size: 12px; color: var(--text-secondary); margin-top: 3px; } .event-notes { font-size: 13px; color: var(--text-hint); margin-top: 2px; font-style: italic; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid var(--sand-dark); border-top-color: var(--terracotta);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    #profile-view, #not-found-view, #error-view { display: none; }
+    #loading-view { display: flex; }
+
+    /* ─── Sitter mode ─── */
+    .sitter-badge {
+      position: absolute; top: 16px; right: 16px; z-index: 2;
+      background: var(--butter); color: var(--forest);
+      border: 2.5px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 6px 14px; border-radius: 999px;
+      font-family: var(--disp); font-size: 12px; font-weight: 800;
+      letter-spacing: 0.5px; display: none; align-items: center; gap: 6px;
+    }
+    .sitter-expires {
+      text-align: center; font-size: 12px; color: var(--forest);
+      margin: 12px 16px 0; font-weight: 700;
+      background: var(--butter); border: 2px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 8px 16px; border-radius: 999px;
+    }
+    .sitter-section-content {
+      font-size: 14px; line-height: 1.7; color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+    .section-icon.sitter { background: var(--butter); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.events { background: rgba(58,140,92,0.12); border: 2px solid var(--forest); border-radius: 12px; }
+
+    /* ─── Dark mode overrides for neo-brut elements ─── */
+    @media (prefers-color-scheme: dark) {
+      .hero { border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(0,0,0,0.3); }
+      .hero-badge-nfc, .sitter-badge { background: #D4A96A; color: #0D1F18; border-color: #2A4A3C; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+      .section-icon.emergency, .section-icon.vet, .section-icon.medical,
+      .section-icon.qr, .section-icon.sitter, .section-icon.events { border-color: #2A4A3C; }
+      .section-icon.emergency, .section-icon.sitter { background: rgba(212,169,106,0.2); }
+      .section-icon.vet, .section-icon.qr { background: rgba(42,62,52,0.5); }
+      .contact-card { background: rgba(42,62,52,0.3); border-color: #2A4A3C; }
+      .sitter-expires { background: rgba(212,169,106,0.15); border-color: #2A4A3C; color: #D4A96A; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+      .call-btn { background: #2A4A3C; border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(201,125,89,0.4); }
+      .call-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.4); }
+      .vet-btn { background: #2A4A3C; border-color: #2A4A3C; box-shadow: 4px 4px 0 rgba(201,125,89,0.4); }
+      .vet-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.4); }
+      .medical-badge { background: rgba(212,169,106,0.2); color: #D4A96A; border-color: #2A4A3C; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
+      .portal-footer-badge { background: rgba(212,169,106,0.15); color: #D4A96A; border-color: #2A4A3C; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
+      .event-item::before { background: #D4A96A; border-color: #2A4A3C; }
+      .event-item::after { background: #2A4A3C; }
+      .share-btn.secondary { background: #1A2E26; }
+      .lost-banner { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+      .lost-message { background: rgba(217,79,79,0.1); border-color: rgba(217,79,79,0.4); }
+      .sticky-call a { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+    }
+    .event-item {
+      padding: 12px 0 12px 20px; border-bottom: 1px solid var(--border-subtle);
+      position: relative;
+    }
+    .event-item::before {
+      content: ''; position: absolute; left: 0; top: 18px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--butter); border: 2px solid var(--forest);
+    }
+    .event-item::after {
+      content: ''; position: absolute; left: 4px; top: 30px;
+      width: 2px; bottom: 0; background: var(--sand);
+    }
+    .event-item:last-child { border-bottom: none; }
+    .event-item:last-child::after { display: none; }
+    .event-title { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .event-meta { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+    .event-notes { font-size: 13px; color: var(--text-hint); margin-top: 2px; font-style: italic; }
   </style>
 </head>
 <body>
 <div class="container">
+
   <div id="loading-view" class="loading"><div class="spinner"></div></div>
-  <div id="error-view" class="error-view"><div style="font-size:48px">&#x26A0;&#xFE0F;</div><p id="error-message">Impossible de charger le profil.</p><button onclick="location.reload()">Réessayer</button></div>
-  <div id="not-found-view"><div class="not-found"><div class="not-found-emoji">&#x1F43E;</div><h1>Médaillon non enregistré</h1><p>Ce médaillon n'est associé à aucun animal pour le moment.</p><a href="https://truffe.pro">Découvrir Truffe</a></div><div class="portal-footer"><div class="portal-footer-logo">truffe<span class="dot"></span></div><div class="portal-footer-sub">Médaillons NFC pour animaux</div></div></div>
-  <div id="profile-view">
-    <div class="brand-header"><div class="brand-header-logo">truffe<span class="dot"></span></div></div>
-    <div class="hero anim-in" id="hero"><div class="hero-skeleton" id="hero-skeleton"></div><div class="hero-badge-nfc">NFC</div><div class="sitter-badge" id="sitter-badge">&#x1F3E0; PET-SITTER</div><div class="hero-name-overlay"><div class="name" id="pet-name"></div><div class="meta" id="pet-meta"></div></div></div>
-    <div class="action-bar anim-in anim-d1" id="action-bar"><button class="action-btn" id="share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button><a class="action-btn" id="call-action-btn" style="display:none">&#x1F4DE; Appeler</a></div>
-    <div id="lost-banner" class="lost-banner" style="display:none"></div><div id="lost-message" class="lost-message" style="display:none"></div>
-    <div class="geoloc-banner" id="geoloc-banner"><p>&#x1F4CD; Aidez à localiser cet animal en partageant votre position approximative</p><button onclick="geolocAccept()">Partager ma position</button><button class="geoloc-dismiss" onclick="geolocDismiss()">Non merci</button></div>
-    <div id="sitter-expires" class="sitter-expires" style="display:none"></div>
-    <div class="section anim-in anim-d1" id="feeding-section" style="display:none"><div class="section-header"><div class="section-icon sitter">&#x1F372;</div><div class="section-title">Repas</div></div><div class="sitter-section-content" id="feeding-content"></div></div>
-    <div class="section anim-in anim-d1" id="sitter-notes-section" style="display:none"><div class="section-header"><div class="section-icon sitter">&#x1F4DD;</div><div class="section-title">Consignes</div></div><div class="sitter-section-content" id="sitter-notes-content"></div></div>
-    <div class="section anim-in anim-d2" id="sitter-health-section" style="display:none"><div class="section-header"><div class="section-icon medical">&#x2695;&#xFE0F;</div><div class="section-title">Santé</div></div><div id="sitter-health-rows"></div></div>
-    <div class="section anim-in anim-d2" id="sitter-events-section" style="display:none"><div class="section-header"><div class="section-icon events">&#x1F4C5;</div><div class="section-title">Événements à venir</div></div><div id="sitter-events-list"></div></div>
-    <div class="section anim-in anim-d3" id="sitter-vet-section" style="display:none"><div class="section-header"><div class="section-icon vet">&#x1FA7A;</div><div class="section-title">Vétérinaire</div></div><div id="sitter-vet-rows"></div></div>
-    <div class="section anim-in anim-d1" id="emergency-section" style="display:none"><div class="section-header"><div class="section-icon emergency">&#x1F4DE;</div><div class="section-title" id="emergency-title">Contact d'urgence</div></div><div id="emergency-contact-card"></div></div>
-    <div class="section anim-in anim-d2" id="vet-section" style="display:none"><div class="section-header"><div class="section-icon vet">&#x1FA7A;</div><div class="section-title">Accès vétérinaire</div></div><div class="pin-error" id="pin-error">Code PIN incorrect.</div><button class="vet-btn" id="vet-btn" onclick="showPinForm()">Entrer le code d'accès</button><div class="vet-form" id="vet-form"><input type="password" id="pin-input" placeholder="• • • •" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}" autocomplete="off" aria-label="Code PIN vétérinaire"><button class="vet-submit" id="vet-submit" onclick="verifyPin()"><span class="submit-text">Vérifier</span><div class="spinner-sm"></div></button><div class="vet-hint">Code fourni par le propriétaire de l'animal</div></div></div>
-    <div class="section anim-in anim-d3" id="medical-section" style="display:none"><div class="section-header"><div class="section-icon medical">&#x2695;&#xFE0F;</div><div class="section-title">Données médicales</div><span class="medical-badge">VÉTO</span></div><div id="medical-rows"></div></div>
-    <div class="section anim-in anim-d3" id="qr-section" style="display:none"><div class="section-header"><div class="section-icon qr">&#x1F517;</div><div class="section-title">Partager ce profil</div></div><div class="qr-inner"><canvas id="qr-canvas"></canvas><div class="share-actions"><button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button><button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button></div><div class="copy-feedback" id="copy-feedback">&#x2705; Lien copié !</div></div></div>
-    <div class="portal-footer anim-in anim-d4"><div class="portal-footer-logo">truffe<span class="dot"></span></div><div class="portal-footer-sub">Médaillons NFC · <a href="https://truffe.pro">truffe.pro</a></div><div class="portal-footer-badge">Profil protégé par Truffe</div></div>
+
+  <div id="error-view" class="error-view">
+    <div style="font-size: 48px;">&#x26A0;&#xFE0F;</div>
+    <p id="error-message">Impossible de charger le profil. V&eacute;rifie ta connexion internet.</p>
+    <button onclick="location.reload()">R&eacute;essayer</button>
   </div>
-  <div class="sticky-call" id="sticky-call"><a id="sticky-call-link">&#x1F6A8; Appeler le propriétaire</a></div>
+
+  <div id="not-found-view">
+    <div class="not-found">
+      <div class="not-found-emoji">&#x1F43E;</div>
+      <h1>M&eacute;daillon non enregistr&eacute;</h1>
+      <p>Ce m&eacute;daillon n'est associ&eacute; &agrave; aucun animal pour le moment.</p>
+      <a href="https://truffe.pro">D&eacute;couvrir Truffe</a>
+    </div>
+    <div class="portal-footer">
+      <div class="portal-footer-logo">truffe<span class="dot"></span></div>
+      <div class="portal-footer-sub">M&eacute;daillons NFC pour animaux</div>
+    </div>
+  </div>
+
+  <div id="profile-view">
+    <div class="brand-header">
+      <div class="brand-header-logo">truffe<span class="dot"></span></div>
+    </div>
+
+    <div class="hero anim-in" id="hero">
+      <div class="hero-skeleton" id="hero-skeleton"></div>
+      <div class="hero-badge-nfc">NFC</div>
+      <div class="sitter-badge" id="sitter-badge">&#x1F3E0; PET-SITTER</div>
+      <div class="hero-name-overlay">
+        <div class="name" id="pet-name"></div>
+        <div class="meta" id="pet-meta"></div>
+      </div>
+    </div>
+
+    <!-- Action bar: share + call -->
+    <div class="action-bar anim-in anim-d1" id="action-bar">
+      <button class="action-btn" id="share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+      <a class="action-btn" id="call-action-btn" style="display:none">&#x1F4DE; Appeler</a>
+    </div>
+
+    <div id="lost-banner" class="lost-banner" style="display:none"></div>
+    <div id="lost-message" class="lost-message" style="display:none"></div>
+
+    <!-- Geoloc consent (shown after profile loads, only in lost mode) -->
+    <div class="geoloc-banner" id="geoloc-banner">
+      <p>&#x1F4CD; Aidez &agrave; localiser cet animal en partageant votre position approximative</p>
+      <button onclick="geolocAccept()">Partager ma position</button>
+      <button class="geoloc-dismiss" onclick="geolocDismiss()">Non merci</button>
+    </div>
+
+    <div id="sitter-expires" class="sitter-expires" style="display:none"></div>
+
+    <div class="section anim-in anim-d1" id="feeding-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon sitter">&#x1F372;</div>
+        <div class="section-title">Repas</div>
+      </div>
+      <div class="sitter-section-content" id="feeding-content"></div>
+    </div>
+
+    <div class="section anim-in anim-d1" id="sitter-notes-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon sitter">&#x1F4DD;</div>
+        <div class="section-title">Consignes</div>
+      </div>
+      <div class="sitter-section-content" id="sitter-notes-content"></div>
+    </div>
+
+    <div class="section anim-in anim-d2" id="sitter-health-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon medical">&#x2695;&#xFE0F;</div>
+        <div class="section-title">Sant&eacute;</div>
+      </div>
+      <div id="sitter-health-rows"></div>
+    </div>
+
+    <div class="section anim-in anim-d2" id="sitter-events-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon events">&#x1F4C5;</div>
+        <div class="section-title">&Eacute;v&eacute;nements &agrave; venir</div>
+      </div>
+      <div id="sitter-events-list"></div>
+    </div>
+
+    <div class="section anim-in anim-d3" id="sitter-vet-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon vet">&#x1FA7A;</div>
+        <div class="section-title">V&eacute;t&eacute;rinaire</div>
+      </div>
+      <div id="sitter-vet-rows"></div>
+    </div>
+
+    <div class="section anim-in anim-d1" id="emergency-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon emergency">&#x1F4DE;</div>
+        <div class="section-title" id="emergency-title">Contact d'urgence</div>
+      </div>
+      <div id="emergency-contact-card"></div>
+    </div>
+
+    <div class="section anim-in anim-d2" id="vet-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon vet">&#x1FA7A;</div>
+        <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
+      </div>
+      <div class="pin-error" id="pin-error">Code PIN incorrect.</div>
+      <button class="vet-btn" id="vet-btn" onclick="showPinForm()">Entrer le code d'acc&egrave;s</button>
+      <div class="vet-form" id="vet-form">
+        <input type="password" id="pin-input" placeholder="&bull; &bull; &bull; &bull;" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}" autocomplete="off" aria-label="Code PIN v&eacute;t&eacute;rinaire">
+        <button class="vet-submit" id="vet-submit" onclick="verifyPin()">
+          <span class="submit-text">V&eacute;rifier</span>
+          <div class="spinner-sm"></div>
+        </button>
+        <div class="vet-hint">Code fourni par le propri&eacute;taire de l'animal</div>
+      </div>
+    </div>
+
+    <div class="section anim-in anim-d3" id="medical-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon medical">&#x2695;&#xFE0F;</div>
+        <div class="section-title">Donn&eacute;es m&eacute;dicales</div>
+        <span class="medical-badge">V&Eacute;TO</span>
+      </div>
+      <div id="medical-rows"></div>
+    </div>
+
+    <div class="section anim-in anim-d3" id="qr-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon qr">&#x1F517;</div>
+        <div class="section-title">Partager ce profil</div>
+      </div>
+      <div class="qr-inner">
+        <canvas id="qr-canvas"></canvas>
+        <div class="share-actions">
+          <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+          <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+        </div>
+        <div class="copy-feedback" id="copy-feedback">&#x2705; Lien copi&eacute; !</div>
+      </div>
+    </div>
+
+    <div class="portal-footer anim-in anim-d4">
+      <div class="portal-footer-logo">truffe<span class="dot"></span></div>
+      <div class="portal-footer-sub">M&eacute;daillons NFC &middot; <a href="https://truffe.pro">truffe.pro</a></div>
+      <div class="portal-footer-badge">Profil prot&eacute;g&eacute; par Truffe</div>
+    </div>
+  </div>
+
+  <!-- Sticky call in lost mode -->
+  <div class="sticky-call" id="sticky-call">
+    <a id="sticky-call-link">&#x1F6A8; Appeler le propri&eacute;taire</a>
+  </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
 <script>
-(function(){var SUPABASE_URL='https://diejcqcjhsbirvjgzetn.supabase.co';var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';var TIMEOUT_MS=10000;var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);var currentTagId=null,currentPetId=null,currentProfile=null,isSitterMode=false;
-function getTagId(){var hash=window.location.hash.replace('#','');if(hash&&hash.indexOf('pet=')!==0)return decodeURIComponent(hash);var params=new URLSearchParams(window.location.search);if(params.get('tag'))return params.get('tag');var parts=window.location.pathname.split('/').filter(Boolean);var last=parts[parts.length-1];if(last&&last.startsWith('TRUFFE-'))return decodeURIComponent(last);return null;}
-function getPetId(){var params=new URLSearchParams(window.location.search);if(params.get('pet'))return params.get('pet');var hash=window.location.hash.replace('#','');if(hash.indexOf('pet=')===0)return decodeURIComponent(hash.slice(4));return null;}
-function getSitterToken(){var params=new URLSearchParams(window.location.search);return params.get('sitter')||null;}
-function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}function show(id,mode){var el=document.getElementById(id);if(el)el.style.display=mode||'block';}function hide(id){var el=document.getElementById(id);if(el)el.style.display='none';}
-function infoRow(label,value,isPhone){if(!value)return '';var val=isPhone?'<a href="tel:'+esc(value)+'">'+esc(value)+'</a>':esc(value);return '<div class="info-row"><span class="info-label">'+esc(label)+'</span><span class="info-value">'+val+'</span></div>';}
-function speciesLabel(s){return s==='cat'?'Chat':'Chien';}function speciesEmoji(s){return s==='cat'?'🐱':'🐶';}
-function formatDate(iso){if(!iso)return null;try{return new Date(iso).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});}catch(e){return iso;}}
-function withTimeout(promise,ms){return Promise.race([promise,new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},ms);})]);}
-function logScanWithoutGeo(){if(!currentTagId)return;try{sb.rpc('log_nfc_scan',{p_nfc_tag_id:currentTagId,p_user_agent:navigator.userAgent}).then(function(){});}catch(e){}}
-window.geolocAccept=function(){hide('geoloc-banner');if(!currentTagId)return;if('geolocation' in navigator){navigator.geolocation.getCurrentPosition(function(pos){try{sb.rpc('log_nfc_scan',{p_nfc_tag_id:currentTagId,p_user_agent:navigator.userAgent,p_latitude:pos.coords.latitude,p_longitude:pos.coords.longitude}).then(function(){});}catch(e){}},function(){},{timeout:5000,maximumAge:60000});}};
-window.geolocDismiss=function(){hide('geoloc-banner');};
-window.nativeShare=function(){if(navigator.share&&currentProfile){navigator.share({title:currentProfile.name+' — Truffe',text:'Profil de '+currentProfile.name+' sur Truffe',url:window.location.href}).catch(function(){});}};
-window.copyLink=function(){if(navigator.clipboard){navigator.clipboard.writeText(window.location.href).then(function(){var fb=document.getElementById('copy-feedback');fb.style.display='block';setTimeout(function(){fb.style.display='none';},2000);});}else{var ta=document.createElement('textarea');ta.value=window.location.href;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);var fb=document.getElementById('copy-feedback');fb.style.display='block';setTimeout(function(){fb.style.display='none';},2000);}};
-function renderProfile(p){currentProfile=p;document.title=p.name+' — Truffe';var nfcBadge=document.querySelector('.hero-badge-nfc');if(nfcBadge&&!currentTagId)nfcBadge.style.display='none';var ld=document.createElement('script');ld.type='application/ld+json';ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':'Thing',name:p.name,description:speciesLabel(p.species)+(p.breed?' · '+p.breed:'')});document.head.appendChild(ld);var hero=document.getElementById('hero');if(p.photo_url){var img=document.createElement('img');img.alt=p.name;img.onload=function(){img.classList.add('loaded');hide('hero-skeleton');};img.onerror=function(){hide('hero-skeleton');};img.src=p.photo_url;hero.insertBefore(img,hero.firstChild);}else{hide('hero-skeleton');var ph=document.createElement('div');ph.className='hero-placeholder';ph.textContent=speciesEmoji(p.species);hero.insertBefore(ph,hero.firstChild);}document.getElementById('pet-name').textContent=p.name;var metaParts=[speciesLabel(p.species)];if(p.breed)metaParts.push(p.breed);if(p.color)metaParts.push(p.color);document.getElementById('pet-meta').textContent=metaParts.join(' · ');if(navigator.share){document.getElementById('share-btn').style.display='flex';document.getElementById('native-share-btn').style.display='flex';}if(p.emergency_contact_phone){var callBtn=document.getElementById('call-action-btn');callBtn.href='tel:'+p.emergency_contact_phone;callBtn.style.display='flex';}show('action-bar','flex');if(p.is_lost){document.getElementById('lost-banner').textContent='⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';show('lost-banner');if(p.lost_message){document.getElementById('lost-message').textContent=p.lost_message;show('lost-message');}if(p.emergency_contact_phone){document.getElementById('sticky-call-link').href='tel:'+p.emergency_contact_phone;show('sticky-call');document.querySelector('.container').style.paddingBottom='80px';}if('geolocation' in navigator){show('geoloc-banner');}}if(p.emergency_contact_name||p.emergency_contact_phone){var initial=(p.emergency_contact_name||'?').charAt(0).toUpperCase();var html='<div class="contact-card">';html+='<div class="contact-avatar">'+esc(initial)+'</div>';html+='<div style="flex:1">';if(p.emergency_contact_name)html+='<div class="contact-name">'+esc(p.emergency_contact_name)+'</div>';if(p.emergency_contact_phone)html+='<div class="contact-phone"><a href="tel:'+esc(p.emergency_contact_phone)+'">'+esc(p.emergency_contact_phone)+'</a></div>';html+='</div></div>';if(p.emergency_contact_phone)html+='<a href="tel:'+esc(p.emergency_contact_phone)+'" class="call-btn">📞 Appeler</a>';document.getElementById('emergency-contact-card').innerHTML=html;if(p.is_lost)document.getElementById('emergency-title').textContent='Contactez le propriétaire';show('emergency-section');}if(p.has_vet_pin&&currentTagId)show('vet-section');hide('loading-view');show('profile-view');generateQR();}
-function renderSitterSections(p){var sitterBadge=document.getElementById('sitter-badge');if(sitterBadge)sitterBadge.style.display='flex';var nfcBadge=document.querySelector('.hero-badge-nfc');if(nfcBadge)nfcBadge.style.display='none';if(p.expires_at){var exp=new Date(p.expires_at);var now=new Date();var diffH=Math.max(0,Math.round((exp-now)/3600000));var expText=diffH>48?'Accès valide encore '+Math.round(diffH/24)+' jours':diffH>0?'Accès valide encore '+diffH+'h':'Accès expiré';document.getElementById('sitter-expires').textContent=expText;show('sitter-expires');}if(p.feeding_instructions){document.getElementById('feeding-content').textContent=p.feeding_instructions;show('feeding-section');}if(p.sitter_notes){document.getElementById('sitter-notes-content').textContent=p.sitter_notes;show('sitter-notes-section');}var healthRows='';healthRows+=infoRow('Poids',p.weight_kg?p.weight_kg+' kg':null);healthRows+=infoRow('Date de naissance',formatDate(p.birthdate));healthRows+=infoRow('Allergies',p.allergies);healthRows+=infoRow('Notes médicales',p.medical_notes);if(healthRows){document.getElementById('sitter-health-rows').innerHTML=healthRows;show('sitter-health-section');}if(p.vet_name||p.vet_phone){var vetRows='';vetRows+=infoRow('Vétérinaire',p.vet_name);vetRows+=infoRow('Téléphone',p.vet_phone,true);document.getElementById('sitter-vet-rows').innerHTML=vetRows;show('sitter-vet-section');}var events=p.upcoming_events||[];if(events.length>0){var evHtml='';var eventTypeLabels={vet_visit:'Visite véto',medication:'Médicament',grooming:'Toilettage',other:'Autre'};for(var i=0;i<events.length;i++){var ev=events[i];evHtml+='<div class="event-item">';evHtml+='<div class="event-title">'+esc(ev.title)+'</div>';evHtml+='<div class="event-meta">'+esc(eventTypeLabels[ev.event_type]||ev.event_type)+' · '+(formatDate(ev.event_date)||'')+'</div>';if(ev.notes)evHtml+='<div class="event-notes">'+esc(ev.notes)+'</div>';evHtml+='</div>';}document.getElementById('sitter-events-list').innerHTML=evHtml;show('sitter-events-section');}hide('vet-section');hide('geoloc-banner');hide('qr-section');}
-function renderMedical(v){var rows='';if(v.sex){rows+=infoRow('Sexe',v.sex==='male'?'Mâle':v.sex==='female'?'Femelle':'Non spécifié');}rows+=infoRow('Date de naissance',formatDate(v.birthdate));rows+=infoRow('Poids',v.weight_kg?v.weight_kg+' kg':null);rows+=infoRow('N° micropuce',v.microchip_number);rows+=infoRow('Allergies',v.allergies);rows+=infoRow('Notes médicales',v.medical_notes);rows+=infoRow('Vétérinaire',v.vet_name);if(v.vet_phone)rows+=infoRow('Tél. vétérinaire',v.vet_phone,true);document.getElementById('medical-rows').innerHTML=rows;hide('vet-section');show('medical-section');}
-function generateQR(){if(typeof QRCode==='undefined'){setTimeout(generateQR,200);return;}try{QRCode.toCanvas(document.getElementById('qr-canvas'),window.location.href,{width:140,margin:2,color:{dark:'#0F3327',light:'#FFFFFF'}});show('qr-section');}catch(e){}}
-window.showPinForm=function(){document.getElementById('vet-btn').style.display='none';document.getElementById('vet-form').classList.add('visible');document.getElementById('pin-input').focus();};
-window.verifyPin=async function(){var pin=document.getElementById('pin-input').value.trim();if(!pin||pin.length<4)return;var btn=document.getElementById('vet-submit');btn.classList.add('loading');btn.disabled=true;try{var res=await sb.rpc('verify_vet_pin',{p_nfc_tag_id:currentTagId,p_pin:pin});btn.classList.remove('loading');btn.disabled=false;if(res.data&&res.data.error==='too_many_attempts'){document.getElementById('pin-error').textContent='Trop de tentatives. Réessayez dans 15 minutes.';document.getElementById('pin-error').classList.add('visible');document.getElementById('pin-input').disabled=true;}else if(res.data&&!res.data.error){renderMedical(res.data);}else{document.getElementById('pin-error').textContent='Code incorrect. Réessayez.';document.getElementById('pin-error').classList.add('visible');document.getElementById('pin-input').value='';document.getElementById('pin-input').focus();}}catch(e){btn.classList.remove('loading');btn.disabled=false;document.getElementById('pin-error').textContent='Erreur de connexion.';document.getElementById('pin-error').classList.add('visible');}};
-var inp=document.getElementById('pin-input');if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')verifyPin();});
-async function init(){var sitterToken=getSitterToken();currentPetId=getPetId();currentTagId=getTagId();if(sitterToken){isSitterMode=true;try{var sRes=await withTimeout(sb.rpc('get_sitter_profile',{p_token:sitterToken}),TIMEOUT_MS);if(sRes.error||!sRes.data){hide('loading-view');var nfEl=document.querySelector('#not-found-view h1');if(nfEl)nfEl.textContent='Lien pet-sitter expiré';var nfP=document.querySelector('#not-found-view p');if(nfP)nfP.textContent='Ce lien n\'est plus valide. Demande un nouveau lien au propriétaire.';show('not-found-view');return;}renderProfile(sRes.data);renderSitterSections(sRes.data);}catch(e){hide('loading-view');if(e.message==='timeout')document.getElementById('error-message').textContent='Le chargement prend trop de temps.';show('error-view');}return;}if(!currentPetId&&!currentTagId){hide('loading-view');show('not-found-view');return;}try{var res;if(currentPetId){res=await withTimeout(sb.rpc('get_public_pet_profile',{p_pet_id:currentPetId}),TIMEOUT_MS);if(res.error||!res.data){hide('loading-view');show('not-found-view');return;}currentTagId=res.data.nfc_tag_id||null;}else{logScanWithoutGeo();res=await withTimeout(sb.rpc('get_public_dog_profile',{p_nfc_tag_id:currentTagId}),TIMEOUT_MS);if(res.error||!res.data){hide('loading-view');show('not-found-view');return;}}renderProfile(res.data);}catch(e){hide('loading-view');if(e.message==='timeout')document.getElementById('error-message').textContent='Le chargement prend trop de temps.';show('error-view');}}
-init();})();
+(function() {
+  var SUPABASE_URL = 'https://diejcqcjhsbirvjgzetn.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';
+  var TIMEOUT_MS = 10000;
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var currentTagId = null, currentPetId = null, currentProfile = null, isSitterMode = false;
+
+  function getTagId() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash && hash.indexOf('pet=') !== 0) return decodeURIComponent(hash);
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('tag')) return params.get('tag');
+    var parts = window.location.pathname.split('/').filter(Boolean);
+    var last = parts[parts.length - 1];
+    if (last && last.startsWith('TRUFFE-')) return decodeURIComponent(last);
+    return null;
+  }
+
+  // Profil public par id d'animal (page partageable sans médaillon NFC).
+  function getPetId() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('pet')) return params.get('pet');
+    var hash = window.location.hash.replace('#', '');
+    if (hash.indexOf('pet=') === 0) return decodeURIComponent(hash.slice(4));
+    return null;
+  }
+
+  // Mode pet-sitter : lien temporaire avec consignes.
+  function getSitterToken() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get('sitter') || null;
+  }
+
+  function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function show(id, mode) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = mode || 'block';
+  }
+  function hide(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+  function infoRow(label, value, isPhone) {
+    if (!value) return '';
+    var val = isPhone ? '<a href="tel:' + esc(value) + '">' + esc(value) + '</a>' : esc(value);
+    return '<div class="info-row"><span class="info-label">' + esc(label) + '</span><span class="info-value">' + val + '</span></div>';
+  }
+
+  function speciesLabel(s) { return s === 'cat' ? 'Chat' : 'Chien'; }
+  function speciesEmoji(s) { return s === 'cat' ? '🐱' : '🐶'; }
+  function formatDate(iso) {
+    if (!iso) return null;
+    try { return new Date(iso).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch(e) { return iso; }
+  }
+
+  function withTimeout(promise, ms) {
+    return Promise.race([promise, new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, ms); })]);
+  }
+
+  // ─── Geoloc: opt-in after profile loads ───
+  function logScanWithoutGeo() {
+    if (!currentTagId) return; // pas de scan à logger en mode profil-par-id
+    try { sb.rpc('log_nfc_scan', { p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent }).then(function(){}); } catch(e) {}
+  }
+
+  window.geolocAccept = function() {
+    hide('geoloc-banner');
+    if (!currentTagId) return; // le log de scan géolocalisé est réservé au médaillon NFC
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        try { sb.rpc('log_nfc_scan', {
+          p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent,
+          p_latitude: pos.coords.latitude, p_longitude: pos.coords.longitude
+        }).then(function(){}); } catch(e) {}
+      }, function() {}, { timeout: 5000, maximumAge: 60000 });
+    }
+  };
+  window.geolocDismiss = function() { hide('geoloc-banner'); };
+
+  // ─── Native share ───
+  window.nativeShare = function() {
+    if (navigator.share && currentProfile) {
+      navigator.share({
+        title: currentProfile.name + ' — Truffe',
+        text: 'Profil de ' + currentProfile.name + ' sur Truffe',
+        url: window.location.href
+      }).catch(function() {});
+    }
+  };
+
+  // ─── Copy link ───
+  window.copyLink = function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var fb = document.getElementById('copy-feedback');
+        fb.style.display = 'block';
+        setTimeout(function() { fb.style.display = 'none'; }, 2000);
+      });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = window.location.href; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      var fb = document.getElementById('copy-feedback');
+      fb.style.display = 'block';
+      setTimeout(function() { fb.style.display = 'none'; }, 2000);
+    }
+  };
+
+  // ─── Render profile ───
+  function renderProfile(p) {
+    currentProfile = p;
+    document.title = p.name + ' — Truffe';
+
+    // Badge "NFC" du hero : seulement si l'animal a réellement un médaillon
+    var nfcBadge = document.querySelector('.hero-badge-nfc');
+    if (nfcBadge && !currentTagId) nfcBadge.style.display = 'none';
+
+    // JSON-LD
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Thing', name: p.name, description: speciesLabel(p.species) + (p.breed ? ' · ' + p.breed : '') });
+    document.head.appendChild(ld);
+
+    // Hero image with skeleton
+    var hero = document.getElementById('hero');
+    if (p.photo_url) {
+      var img = document.createElement('img');
+      img.alt = p.name;
+      img.onload = function() { img.classList.add('loaded'); hide('hero-skeleton'); };
+      img.onerror = function() { hide('hero-skeleton'); };
+      img.src = p.photo_url;
+      hero.insertBefore(img, hero.firstChild);
+    } else {
+      hide('hero-skeleton');
+      var ph = document.createElement('div');
+      ph.className = 'hero-placeholder';
+      ph.textContent = speciesEmoji(p.species);
+      hero.insertBefore(ph, hero.firstChild);
+    }
+
+    document.getElementById('pet-name').textContent = p.name;
+    var metaParts = [speciesLabel(p.species)];
+    if (p.breed) metaParts.push(p.breed);
+    if (p.color) metaParts.push(p.color);
+    document.getElementById('pet-meta').textContent = metaParts.join(' · ');
+
+    // Action bar
+    if (navigator.share) {
+      document.getElementById('share-btn').style.display = 'flex';
+      document.getElementById('native-share-btn').style.display = 'flex';
+    }
+    if (p.emergency_contact_phone) {
+      var callBtn = document.getElementById('call-action-btn');
+      callBtn.href = 'tel:' + p.emergency_contact_phone;
+      callBtn.style.display = 'flex';
+    }
+    show('action-bar', 'flex');
+
+    // Lost mode
+    if (p.is_lost) {
+      document.getElementById('lost-banner').textContent = '⚠ ANIMAL PERDU — MERCI DE CONTACTER LE PROPRIÉTAIRE';
+      show('lost-banner');
+      if (p.lost_message) {
+        document.getElementById('lost-message').textContent = p.lost_message;
+        show('lost-message');
+      }
+      // Sticky call button
+      if (p.emergency_contact_phone) {
+        document.getElementById('sticky-call-link').href = 'tel:' + p.emergency_contact_phone;
+        show('sticky-call');
+        document.querySelector('.container').style.paddingBottom = '80px';
+      }
+      // Geoloc consent banner (only in lost mode)
+      if ('geolocation' in navigator) {
+        show('geoloc-banner');
+      }
+    }
+
+    // Emergency contact
+    if (p.emergency_contact_name || p.emergency_contact_phone) {
+      var initial = (p.emergency_contact_name || '?').charAt(0).toUpperCase();
+      var html = '<div class="contact-card">';
+      html += '<div class="contact-avatar">' + esc(initial) + '</div>';
+      html += '<div style="flex:1">';
+      if (p.emergency_contact_name) html += '<div class="contact-name">' + esc(p.emergency_contact_name) + '</div>';
+      if (p.emergency_contact_phone) html += '<div class="contact-phone"><a href="tel:' + esc(p.emergency_contact_phone) + '">' + esc(p.emergency_contact_phone) + '</a></div>';
+      html += '</div></div>';
+      if (p.emergency_contact_phone) html += '<a href="tel:' + esc(p.emergency_contact_phone) + '" class="call-btn">📞 Appeler</a>';
+      document.getElementById('emergency-contact-card').innerHTML = html;
+      if (p.is_lost) document.getElementById('emergency-title').textContent = 'Contactez le propriétaire';
+      show('emergency-section');
+    }
+
+    // Accès véto seulement si un médaillon existe (verify_vet_pin est keyé par tag)
+    if (p.has_vet_pin && currentTagId) show('vet-section');
+
+    hide('loading-view');
+    show('profile-view');
+    generateQR();
+  }
+
+  // ─── Render sitter-specific sections ───
+  function renderSitterSections(p) {
+    // Sitter badge on hero
+    var sitterBadge = document.getElementById('sitter-badge');
+    if (sitterBadge) sitterBadge.style.display = 'flex';
+    var nfcBadge = document.querySelector('.hero-badge-nfc');
+    if (nfcBadge) nfcBadge.style.display = 'none';
+
+    // Expiration notice
+    if (p.expires_at) {
+      var exp = new Date(p.expires_at);
+      var now = new Date();
+      var diffH = Math.max(0, Math.round((exp - now) / 3600000));
+      var expText = diffH > 48
+        ? 'Accès valide encore ' + Math.round(diffH / 24) + ' jours'
+        : diffH > 0
+          ? 'Accès valide encore ' + diffH + 'h'
+          : 'Accès expiré';
+      document.getElementById('sitter-expires').textContent = expText;
+      show('sitter-expires');
+    }
+
+    // Feeding instructions
+    if (p.feeding_instructions) {
+      document.getElementById('feeding-content').textContent = p.feeding_instructions;
+      show('feeding-section');
+    }
+
+    // Sitter notes
+    if (p.sitter_notes) {
+      document.getElementById('sitter-notes-content').textContent = p.sitter_notes;
+      show('sitter-notes-section');
+    }
+
+    // Health info (allergies, medical_notes, weight, birthdate)
+    var healthRows = '';
+    healthRows += infoRow('Poids', p.weight_kg ? p.weight_kg + ' kg' : null);
+    healthRows += infoRow('Date de naissance', formatDate(p.birthdate));
+    healthRows += infoRow('Allergies', p.allergies);
+    healthRows += infoRow('Notes médicales', p.medical_notes);
+    if (healthRows) {
+      document.getElementById('sitter-health-rows').innerHTML = healthRows;
+      show('sitter-health-section');
+    }
+
+    // Vet info
+    if (p.vet_name || p.vet_phone) {
+      var vetRows = '';
+      vetRows += infoRow('Vétérinaire', p.vet_name);
+      vetRows += infoRow('Téléphone', p.vet_phone, true);
+      document.getElementById('sitter-vet-rows').innerHTML = vetRows;
+      show('sitter-vet-section');
+    }
+
+    // Upcoming events
+    var events = p.upcoming_events || [];
+    if (events.length > 0) {
+      var evHtml = '';
+      var eventTypeLabels = { vet_visit: 'Visite véto', medication: 'Médicament', grooming: 'Toilettage', other: 'Autre' };
+      for (var i = 0; i < events.length; i++) {
+        var ev = events[i];
+        evHtml += '<div class="event-item">';
+        evHtml += '<div class="event-title">' + esc(ev.title) + '</div>';
+        evHtml += '<div class="event-meta">' + esc(eventTypeLabels[ev.event_type] || ev.event_type) + ' · ' + (formatDate(ev.event_date) || '') + '</div>';
+        if (ev.notes) evHtml += '<div class="event-notes">' + esc(ev.notes) + '</div>';
+        evHtml += '</div>';
+      }
+      document.getElementById('sitter-events-list').innerHTML = evHtml;
+      show('sitter-events-section');
+    }
+
+    // Hide sections not relevant to sitter
+    hide('vet-section');
+    hide('geoloc-banner');
+    hide('qr-section');
+  }
+
+  function renderMedical(v) {
+    var rows = '';
+    if (v.sex) { rows += infoRow('Sexe', v.sex === 'male' ? 'Mâle' : v.sex === 'female' ? 'Femelle' : 'Non spécifié'); }
+    rows += infoRow('Date de naissance', formatDate(v.birthdate));
+    rows += infoRow('Poids', v.weight_kg ? v.weight_kg + ' kg' : null);
+    rows += infoRow('N° micropuce', v.microchip_number);
+    rows += infoRow('Allergies', v.allergies);
+    rows += infoRow('Notes médicales', v.medical_notes);
+    rows += infoRow('Vétérinaire', v.vet_name);
+    if (v.vet_phone) rows += infoRow('Tél. vétérinaire', v.vet_phone, true);
+    document.getElementById('medical-rows').innerHTML = rows;
+    hide('vet-section');
+    show('medical-section');
+  }
+
+  function generateQR() {
+    if (typeof QRCode === 'undefined') { setTimeout(generateQR, 200); return; }
+    try {
+      QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, {
+        width: 140, margin: 2, color: { dark: '#0F3327', light: '#FFFFFF' }
+      });
+      show('qr-section');
+    } catch(e) {}
+  }
+
+  // ─── PIN ───
+  window.showPinForm = function() {
+    document.getElementById('vet-btn').style.display = 'none';
+    document.getElementById('vet-form').classList.add('visible');
+    document.getElementById('pin-input').focus();
+  };
+
+  window.verifyPin = async function() {
+    var pin = document.getElementById('pin-input').value.trim();
+    if (!pin || pin.length < 4) return;
+    var btn = document.getElementById('vet-submit');
+    btn.classList.add('loading'); btn.disabled = true;
+    try {
+      var res = await sb.rpc('verify_vet_pin', { p_nfc_tag_id: currentTagId, p_pin: pin });
+      btn.classList.remove('loading'); btn.disabled = false;
+      if (res.data && res.data.error === 'too_many_attempts') {
+        document.getElementById('pin-error').textContent = 'Trop de tentatives. Réessayez dans 15 minutes.';
+        document.getElementById('pin-error').classList.add('visible');
+        document.getElementById('pin-input').disabled = true;
+      } else if (res.data && !res.data.error) {
+        renderMedical(res.data);
+      } else {
+        document.getElementById('pin-error').textContent = 'Code incorrect. Réessayez.';
+        document.getElementById('pin-error').classList.add('visible');
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-input').focus();
+      }
+    } catch(e) {
+      btn.classList.remove('loading'); btn.disabled = false;
+      document.getElementById('pin-error').textContent = 'Erreur de connexion.';
+      document.getElementById('pin-error').classList.add('visible');
+    }
+  };
+
+  var inp = document.getElementById('pin-input');
+  if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
+
+  // ─── Init ───
+  async function init() {
+    var sitterToken = getSitterToken();
+    currentPetId = getPetId();
+    currentTagId = getTagId();
+
+    // Mode pet-sitter : prioritaire sur les autres modes
+    if (sitterToken) {
+      isSitterMode = true;
+      try {
+        var sRes = await withTimeout(sb.rpc('get_sitter_profile', { p_token: sitterToken }), TIMEOUT_MS);
+        if (sRes.error || !sRes.data) {
+          hide('loading-view');
+          // Message d'erreur adapté
+          var nfEl = document.querySelector('#not-found-view h1');
+          if (nfEl) nfEl.textContent = 'Lien pet-sitter expiré';
+          var nfP = document.querySelector('#not-found-view p');
+          if (nfP) nfP.textContent = 'Ce lien n\'est plus valide. Demande un nouveau lien au propriétaire.';
+          show('not-found-view');
+          return;
+        }
+        renderProfile(sRes.data);
+        renderSitterSections(sRes.data);
+      } catch(e) {
+        hide('loading-view');
+        if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
+        show('error-view');
+      }
+      return;
+    }
+
+    if (!currentPetId && !currentTagId) { hide('loading-view'); show('not-found-view'); return; }
+    try {
+      var res;
+      if (currentPetId) {
+        // Mode profil public par id (animal sans médaillon NFC)
+        res = await withTimeout(sb.rpc('get_public_pet_profile', { p_pet_id: currentPetId }), TIMEOUT_MS);
+        if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
+        // Si l'animal a aussi un médaillon, on l'active pour l'accès véto.
+        currentTagId = res.data.nfc_tag_id || null;
+      } else {
+        logScanWithoutGeo();
+        res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
+        if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
+      }
+      renderProfile(res.data);
+    } catch(e) {
+      hide('loading-view');
+      if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
+      show('error-view');
+    }
+  }
+
+  init();
+})();
 </script>
 </body>
 </html>
