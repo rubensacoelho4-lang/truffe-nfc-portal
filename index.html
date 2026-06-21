@@ -15,56 +15,114 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="data:application/json,{%22name%22:%22Truffe%22,%22short_name%22:%22Truffe%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23E7DAC0%22,%22theme_color%22:%22%2316130F%22}">
   <style>
-    /* DA « Bureau des Truffes » — palette registre (encre/kraft/papier/signal). */
     :root {
-      --forest: #16130F;        /* encre */
-      --forest-mid: #5A5346;
+      --forest: #16130F;
+      --forest-mid: #2C5446;
       --forest-light: #8A8170;
-      --terracotta: #C23A10;    /* signal-dark (accents texte, WCAG) */
-      --cream: #E7DAC0;         /* kraft (fond) */
+      --terracotta: #C23A10;
+      --terracotta-deep: #B0623C;
+      --cream: #E7DAC0;
+      --paper: #F4ECE3;
+      --sand: #E7D9C8;
       --sand-dark: #DCCFB2;
-      --white: #F2E9D6;         /* papier (cartes) */
-      --error: #FF4D14;         /* signal (aplat alerte) */
+      --butter: #EFC98E;
+      --ink: #211C16;
+      --white: #F2E9D6;
+      --error: #FF4D14;
       --error-light: #F7E2D8;
       --success: #2F7D4F;
+      --disp: 'Space Grotesk', sans-serif;
+      --sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --shadow-hard: 5px 5px 0 var(--forest);
+      --shadow-hard-lg: 8px 8px 0 var(--forest);
       --card-bg: var(--white);
-      --body-bg: var(--cream);
-      --text-primary: var(--forest);
+      --body-bg: var(--paper);
+      --text-primary: var(--ink);
       --text-secondary: var(--forest-mid);
       --text-hint: var(--forest-light);
-      --border-subtle: rgba(22,19,15,0.10);
-      --shadow-card: 5px 5px 0 var(--forest);
+      --border-card: 2.5px solid var(--forest);
+      --border-subtle: rgba(15,51,39,0.04);
+      --shadow-card: var(--shadow-hard);
     }
-    /* Pas de thème sombre web : portail toujours en kraft chaud (rendu poster
-       cohérent + ombres pleines lisibles). */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --card-bg: #211C16;
+        --body-bg: #16130F;
+        --text-primary: #E7DAC0;
+        --text-secondary: #A8BFB2;
+        --text-hint: #8A8170;
+        --border-card: 2.5px solid rgba(201,125,89,0.35);
+        --border-subtle: rgba(239,201,142,0.08);
+        --shadow-card: 4px 4px 0 rgba(201,125,89,0.2);
+        --shadow-hard: 4px 4px 0 rgba(201,125,89,0.2);
+        --shadow-hard-lg: 6px 6px 0 rgba(201,125,89,0.25);
+        --sand-dark: #211C16;
+        --butter: #EFC98E;
+        --sand: #2D3E34;
+        --paper: #16130F;
+        --terracotta: #D4926A;
+      }
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: var(--sans);
       background: var(--body-bg); color: var(--text-primary);
       min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: 440px; margin: 0 auto; padding: 0 0 32px; }
+    .container { max-width: 560px; margin: 0 auto; padding: 0 0 32px; }
 
     /* ─── Animations ─── */
-    @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
+    @keyframes shimmer2 { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse-lost { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
     @keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 10%,50%,90% { transform: translateX(-4px); } 30%,70% { transform: translateX(4px); } }
+    @keyframes ripple-out { 0% { transform: scale(0); opacity: 0.4; } 100% { transform: scale(2.5); opacity: 0; } }
+    @keyframes bounce-tap { 0% { transform: scale(0.95); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    @keyframes toast-in { 0% { transform: translateY(20px) translateX(-50%); opacity: 0; } 100% { transform: translateY(0) translateX(-50%); opacity: 1; } }
+    @keyframes toast-out { 0% { transform: translateY(0) translateX(-50%); opacity: 1; } 100% { transform: translateY(-10px) translateX(-50%); opacity: 0; } }
+    @keyframes pulse-avatar { 0%,100% { box-shadow: 0 0 0 0 rgba(201,125,89,0.4); } 50% { box-shadow: 0 0 0 8px rgba(201,125,89,0); } }
+    @keyframes success-pulse { 0% { box-shadow: 0 0 0 0 rgba(58,140,92,0.4); } 100% { box-shadow: 0 0 0 12px rgba(58,140,92,0); } }
+
+    /* Scroll-driven reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+
+    /* Legacy anim classes (kept for initial hero) */
     .anim-in { animation: fade-up 0.5s ease both; }
     .anim-d1 { animation-delay: 0.1s; }
     .anim-d2 { animation-delay: 0.2s; }
     .anim-d3 { animation-delay: 0.3s; }
     .anim-d4 { animation-delay: 0.4s; }
 
+    /* ─── Scroll progress ─── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: var(--terracotta); z-index: 102;
+      transition: width 0.1s linear;
+    }
+
     /* ─── Brand header ─── */
     .brand-header {
       display: flex; align-items: center; justify-content: center;
       padding: 14px 16px; background: var(--forest);
+      position: sticky; top: 0; z-index: 100;
+      transition: padding 0.25s ease, backdrop-filter 0.25s ease;
+    }
+    .brand-header.scrolled {
+      padding: 10px 16px;
+      background: rgba(15,51,39,0.88);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 2px solid var(--terracotta);
     }
     .brand-header-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px; font-weight: 700; color: var(--cream);
+      font-family: var(--disp);
+      font-size: 18px; font-weight: 800; color: var(--cream);
       letter-spacing: 0.5px; position: relative;
     }
     .brand-header-logo .dot {
@@ -78,7 +136,8 @@
       height: 360px; background: var(--sand-dark);
       position: relative; overflow: hidden;
       border-radius: 24px;
-      box-shadow: 0 8px 32px rgba(15,51,39,0.15);
+      border: 2.5px solid var(--forest);
+      box-shadow: 6px 6px 0 var(--forest);
     }
     .hero img {
       width: 100%; height: 100%; object-fit: cover;
@@ -87,9 +146,11 @@
     .hero img.loaded { opacity: 1; }
     .hero-skeleton {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, var(--sand-dark) 0%, #EDE3D8 40%, var(--sand-dark) 80%);
-      background-size: 400px 100%;
-      animation: shimmer 1.5s infinite linear;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 30%, transparent 60%),
+        linear-gradient(90deg, var(--sand-dark) 0%, #DCCFB2 40%, var(--sand-dark) 80%);
+      background-size: 600px 100%, 400px 100%;
+      animation: shimmer2 2s infinite linear, shimmer 1.5s infinite linear;
     }
     .hero::after {
       content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
@@ -106,8 +167,9 @@
       position: absolute; bottom: 24px; left: 24px; right: 24px; z-index: 2;
     }
     .hero-name-overlay .name {
-      font-size: 34px; font-weight: 700; color: #fff;
-      line-height: 1.1; letter-spacing: -0.5px;
+      font-family: var(--disp);
+      font-size: 36px; font-weight: 800; color: #fff;
+      line-height: 1.1; letter-spacing: -0.02em;
       text-shadow: 0 2px 16px rgba(0,0,0,0.3);
     }
     .hero-name-overlay .meta {
@@ -117,15 +179,44 @@
     }
     .hero-badge-nfc {
       position: absolute; top: 16px; right: 16px; z-index: 2;
-      background: rgba(255,255,255,0.15); backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 6px 14px; border-radius: 20px;
-      font-size: 11px; font-weight: 700; color: #fff;
-      letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;
+      background: var(--butter); color: var(--forest);
+      border: 2.5px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 6px 14px; border-radius: 999px;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
     }
     .hero-badge-nfc::before {
       content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: #6FCF7C; animation: pulse-dot 2s infinite;
+      background: #2F7D4F; animation: pulse-dot 2s infinite;
+    }
+
+    /* ─── Stat pills ─── */
+    .stat-pills {
+      display: flex; gap: 8px; margin: 12px 16px 0; justify-content: center;
+    }
+    .stat-pill {
+      flex: 1; text-align: center; padding: 10px 8px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 14px; box-shadow: var(--shadow-hard);
+    }
+    .stat-pill-value {
+      font-family: var(--disp); font-size: 16px; font-weight: 800;
+      color: var(--text-primary); line-height: 1.2;
+    }
+    .stat-pill-label {
+      font-size: 11px; color: var(--text-hint); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .stat-pill { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+    }
+
+    /* ─── Updated at indicator ─── */
+    .updated-at {
+      text-align: center; font-size: 12px; color: var(--text-hint);
+      margin: 8px 16px 0; font-weight: 500;
     }
 
     /* ─── Action bar ─── */
@@ -134,28 +225,32 @@
     }
     .action-btn {
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 13px 12px; border-radius: 14px;
-      background: var(--card-bg); border: none;
-      box-shadow: var(--shadow-card);
-      font-family: inherit; font-size: 13px; font-weight: 700;
+      padding: 14px 12px; border-radius: 14px;
+      background: var(--card-bg); border: var(--border-card);
+      box-shadow: var(--shadow-hard);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
       color: var(--text-primary); cursor: pointer;
-      text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
-    .action-btn:active { transform: scale(0.97); }
+    .action-btn { position: relative; overflow: hidden; }
+    .action-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .action-btn:active { animation: bounce-tap 0.3s ease; box-shadow: 2px 2px 0 var(--forest); }
+    .action-btn .ripple { position: absolute; border-radius: 50%; background: rgba(201,125,89,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
 
     /* ─── Lost banner ─── */
     .lost-banner {
-      background: var(--error); color: var(--forest);
+      background: var(--error); color: #fff;
       padding: 14px 20px; text-align: center;
-      font-weight: 700; font-size: 14px; letter-spacing: 0.8px;
+      font-family: var(--disp); font-weight: 800; font-size: 14px; letter-spacing: 0.8px;
       animation: pulse-lost 2s infinite;
       margin: 14px 16px 0; border-radius: 14px;
+      border: 2.5px solid #A03030; box-shadow: 4px 4px 0 #A03030;
     }
     .lost-message {
       background: var(--error-light); color: var(--error);
       padding: 14px 18px; font-size: 14px; line-height: 1.6;
-      border-left: 4px solid var(--error);
-      margin: 10px 16px 0; border-radius: 0 14px 14px 0;
+      border: 2px solid var(--error);
+      margin: 10px 16px 0; border-radius: 14px;
     }
     .sticky-call {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -170,36 +265,45 @@
     }
     .sticky-call a {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      max-width: 440px; margin: 0 auto; padding: 16px;
-      background: var(--error); color: var(--forest);
-      border-radius: 16px; font-size: 16px; font-weight: 700;
-      text-decoration: none; font-family: inherit;
-      box-shadow: 0 4px 20px rgba(217,79,79,0.3);
+      max-width: 560px; margin: 0 auto; padding: 16px;
+      background: var(--error); color: #fff;
+      border: 2.5px solid #A03030; border-radius: 16px;
+      box-shadow: 4px 4px 0 #A03030;
+      font-family: var(--disp); font-size: 16px; font-weight: 800;
+      text-decoration: none;
     }
 
     /* ─── Geoloc consent ─── */
     .geoloc-banner {
-      margin: 14px 16px 0; padding: 14px 16px;
-      background: rgba(201,125,89,0.08); border-radius: 14px;
+      margin: 14px 16px 0; padding: 16px 18px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 18px; box-shadow: var(--shadow-hard);
       display: none; text-align: center;
     }
     .geoloc-banner p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
     .geoloc-banner button {
-      padding: 10px 20px; border-radius: 10px; border: none;
+      padding: 10px 20px; border-radius: 12px;
+      border: 2px solid var(--forest);
       background: var(--terracotta); color: #fff;
-      font-family: inherit; font-size: 13px; font-weight: 700;
+      box-shadow: 3px 3px 0 var(--forest);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
       cursor: pointer; margin: 0 4px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
+    .geoloc-banner button:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--forest); }
     .geoloc-banner .geoloc-dismiss {
       background: transparent; color: var(--text-hint);
     }
 
     /* ─── Sections ─── */
     .section {
-      background: var(--card-bg); border-radius: 20px;
-      margin: 14px 16px; padding: 20px;
-      box-shadow: var(--shadow-card);
+      background: var(--card-bg); border-radius: 24px;
+      margin: 14px 16px; padding: 22px;
+      border: var(--border-card);
+      box-shadow: var(--shadow-hard);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
     }
+    .section:hover { transform: translate(-3px,-3px) scale(1.01); box-shadow: var(--shadow-hard-lg); }
     .section-header {
       display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
     }
@@ -208,11 +312,11 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; flex-shrink: 0;
     }
-    .section-icon.emergency { background: rgba(201,125,89,0.1); }
-    .section-icon.vet { background: rgba(15,51,39,0.06); }
-    .section-icon.medical { background: rgba(58,140,92,0.1); }
-    .section-icon.qr { background: rgba(143,169,157,0.12); }
-    .section-title { font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; }
+    .section-icon.emergency { background: var(--butter); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.vet { background: var(--sand); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.medical { background: rgba(58,140,92,0.12); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.qr { background: var(--sand); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-title { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--text-primary); flex: 1; }
     .info-row {
       display: flex; justify-content: space-between; align-items: baseline;
       padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
@@ -225,55 +329,68 @@
     /* ─── Contact card ─── */
     .contact-card {
       display: flex; align-items: center; gap: 14px;
-      background: var(--border-subtle); border-radius: 16px; padding: 16px;
+      background: var(--paper); border: 2px solid var(--sand);
+      border-radius: 16px; padding: 16px;
     }
     .contact-avatar {
       width: 48px; height: 48px; border-radius: 24px; background: var(--forest);
       display: flex; align-items: center; justify-content: center;
       font-size: 18px; font-weight: 700; color: var(--cream); flex-shrink: 0;
+      transition: box-shadow 0.3s ease;
     }
+    .contact-avatar:hover { animation: pulse-avatar 1s ease infinite; }
     .contact-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
     .contact-phone { font-size: 13px; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
     .contact-phone a { color: var(--terracotta); text-decoration: none; }
     .call-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin-top: 12px; padding: 14px;
-      background: var(--terracotta); color: #fff;
-      border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
-      cursor: pointer; font-family: inherit; width: 100%;
-      text-decoration: none; transition: transform 0.15s;
+      margin-top: 14px; padding: 15px;
+      background: var(--forest); color: var(--cream);
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: 5px 5px 0 var(--terracotta);
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: var(--sans); width: 100%;
+      text-decoration: none; transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
-    .call-btn:active { transform: scale(0.97); }
+    .call-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--terracotta); }
+    .call-btn { position: relative; overflow: hidden; }
+    .call-btn:active { animation: bounce-tap 0.3s ease; box-shadow: 2px 2px 0 var(--terracotta); }
+    .call-btn .ripple, .vet-btn .ripple, .share-btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
 
     /* ─── Vet access ─── */
     .vet-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; padding: 15px;
       background: var(--forest); color: var(--cream);
-      border: none; border-radius: 14px;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: 5px 5px 0 var(--terracotta);
       font-size: 15px; font-weight: 700; cursor: pointer;
-      font-family: inherit; transition: transform 0.15s;
+      font-family: var(--sans); transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
-    .vet-btn:active { transform: scale(0.97); }
+    .vet-btn:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--terracotta); }
+    .vet-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--terracotta); }
     .vet-form { margin-top: 14px; display: none; }
     .vet-form.visible { display: block; }
     .vet-form input {
       width: 100%; padding: 14px;
-      border: 2px solid var(--sand-dark); border-radius: 14px;
+      border: 2.5px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
       font-size: 22px; text-align: center; letter-spacing: 10px;
-      color: var(--text-primary); background: var(--body-bg);
-      outline: none; font-family: inherit; font-weight: 700;
-      autocomplete: off;
+      color: var(--text-primary); background: var(--card-bg);
+      outline: none; font-family: var(--sans); font-weight: 700;
+      autocomplete: off; transition: box-shadow 0.14s ease;
     }
-    .vet-form input:focus { border-color: var(--terracotta); }
+    .vet-form input:focus { box-shadow: var(--shadow-hard-lg); border-color: var(--terracotta); }
     .vet-submit {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; margin-top: 10px; padding: 14px;
       background: var(--terracotta); color: #fff;
-      border: none; border-radius: 14px;
-      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
-      transition: opacity 0.2s;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.2s;
     }
+    .vet-submit:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
     .vet-submit:disabled { opacity: 0.6; cursor: not-allowed; }
     .vet-submit .spinner-sm {
       width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
@@ -290,10 +407,32 @@
       font-weight: 600; display: none;
     }
     .pin-error.visible { display: block; }
+    .pin-error.shake { animation: shake 0.4s ease; }
+    .vet-form input.shake { animation: shake 0.4s ease; border-color: var(--error); }
+    .vet-form input.success { border-color: var(--success); animation: success-pulse 0.6s ease; }
     .medical-badge {
-      display: inline-block; background: var(--success); color: #fff;
-      font-size: 10px; font-weight: 700; padding: 3px 10px;
-      border-radius: 999px; letter-spacing: 0.5px; vertical-align: middle;
+      display: inline-block; background: var(--butter); color: var(--forest);
+      font-family: var(--sans); font-size: 10px; font-weight: 700; padding: 5px 12px;
+      border-radius: 999px; letter-spacing: 1px; text-transform: uppercase;
+      border: 2px solid var(--forest); box-shadow: 3px 3px 0 var(--forest);
+      vertical-align: middle;
+    }
+    .health-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      padding: 5px 12px; border-radius: 999px; margin: 4px 4px 4px 0;
+    }
+    .health-badge.vaccins {
+      background: rgba(58,140,92,0.12); color: var(--success);
+      border: 2px solid var(--success);
+    }
+    .health-badge.allergies {
+      background: rgba(217,79,79,0.08); color: var(--error);
+      border: 2px solid var(--error);
+    }
+    @media (prefers-color-scheme: dark) {
+      .health-badge.vaccins { background: rgba(58,140,92,0.15); color: #6BC88E; border-color: rgba(58,140,92,0.5); }
+      .health-badge.allergies { background: rgba(217,79,79,0.12); color: #E87070; border-color: rgba(217,79,79,0.4); }
     }
 
     /* ─── QR + share ─── */
@@ -301,25 +440,43 @@
     .qr-inner canvas { margin: 0 auto 12px; border-radius: 8px; }
     .share-actions { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
     .share-btn {
-      padding: 10px 18px; border-radius: 10px; border: none;
-      font-family: inherit; font-size: 13px; font-weight: 700;
+      padding: 10px 18px; border-radius: 12px;
+      border: 2px solid var(--forest);
+      font-family: var(--sans); font-size: 13px; font-weight: 700;
       cursor: pointer; display: flex; align-items: center; gap: 6px;
-      transition: transform 0.15s;
+      box-shadow: 3px 3px 0 var(--forest);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
-    .share-btn:active { transform: scale(0.96); }
+    .share-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--forest); }
+    .share-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--forest); }
     .share-btn.primary { background: var(--terracotta); color: #fff; }
-    .share-btn.secondary { background: var(--border-subtle); color: var(--text-primary); }
+    .share-btn.secondary { background: var(--paper); color: var(--text-primary); }
     .copy-feedback {
       font-size: 12px; color: var(--success); font-weight: 600;
       margin-top: 6px; display: none; text-align: center;
+    }
+    .toast {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--forest); color: var(--cream);
+      padding: 12px 24px; border-radius: 14px;
+      border: 2px solid var(--terracotta);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      font-family: var(--sans); font-size: 14px; font-weight: 700;
+      z-index: 200; pointer-events: none;
+      animation: toast-in 0.3s ease forwards;
+    }
+    .toast.out { animation: toast-out 0.3s ease forwards; }
+    @media (prefers-color-scheme: dark) {
+      .toast { background: #1E4035; border-color: rgba(201,125,89,0.5); }
     }
 
     /* ─── Footer ─── */
     .portal-footer { text-align: center; padding: 28px 16px 20px; }
     .portal-footer-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px; font-weight: 700; color: var(--text-primary);
-      letter-spacing: 0.5px; display: inline-block; position: relative;
+      font-family: var(--disp);
+      font-size: 24px; font-weight: 800; color: var(--text-primary);
+      letter-spacing: -0.02em; display: inline-block; position: relative;
     }
     .portal-footer-logo .dot {
       position: absolute; top: 0; right: -4px;
@@ -329,9 +486,11 @@
     .portal-footer-sub a { color: var(--terracotta); text-decoration: none; font-weight: 600; }
     .portal-footer-badge {
       display: inline-block; margin-top: 12px;
-      padding: 6px 16px; border-radius: 20px;
-      background: var(--border-subtle);
-      font-size: 11px; font-weight: 600; color: var(--text-secondary);
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--butter); color: var(--forest);
+      border: 2px solid var(--forest); box-shadow: 3px 3px 0 var(--forest);
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
     /* ─── States ─── */
@@ -340,13 +499,17 @@
       justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
     }
     .not-found-emoji { font-size: 64px; margin-bottom: 20px; }
-    .not-found h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .not-found h1 { font-family: var(--disp); font-size: 26px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; }
     .not-found p { font-size: 15px; color: var(--text-secondary); max-width: 300px; line-height: 1.6; margin-bottom: 28px; }
     .not-found a {
       display: inline-block; padding: 14px 28px;
       background: var(--terracotta); color: #fff;
-      border-radius: 14px; text-decoration: none; font-weight: 700;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      text-decoration: none; font-weight: 700; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
+    .not-found a:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
     .error-view {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; min-height: 80vh; padding: 40px 24px; text-align: center;
@@ -355,9 +518,12 @@
     .error-view button {
       margin-top: 24px; padding: 14px 28px;
       background: var(--terracotta); color: #fff;
-      border: none; border-radius: 14px;
-      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+      border: 2px solid var(--forest); border-radius: 14px;
+      box-shadow: var(--shadow-hard);
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--sans);
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
+    .error-view button:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
     .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
     .spinner {
       width: 44px; height: 44px;
@@ -366,9 +532,162 @@
     }
     #profile-view, #not-found-view, #error-view { display: none; }
     #loading-view { display: flex; }
+
+    /* ─── Sitter mode ─── */
+    .sitter-badge {
+      position: absolute; top: 16px; right: 16px; z-index: 2;
+      background: var(--butter); color: var(--forest);
+      border: 2.5px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 6px 14px; border-radius: 999px;
+      font-family: var(--disp); font-size: 12px; font-weight: 800;
+      letter-spacing: 0.5px; display: none; align-items: center; gap: 6px;
+    }
+    .sitter-expires {
+      text-align: center; font-size: 12px; color: var(--forest);
+      margin: 12px 16px 0; font-weight: 700;
+      background: var(--butter); border: 2px solid var(--forest);
+      box-shadow: 3px 3px 0 var(--forest);
+      padding: 8px 16px; border-radius: 999px;
+    }
+    .sitter-section-content {
+      font-size: 14px; line-height: 1.7; color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+    .section-icon.sitter { background: var(--butter); border: 2px solid var(--forest); border-radius: 12px; }
+    .section-icon.events { background: rgba(58,140,92,0.12); border: 2px solid var(--forest); border-radius: 12px; }
+
+    /* ─── Bottom sheet ─── */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 150; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    .bottom-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card-bg); border-radius: 24px 24px 0 0;
+      border-top: 2.5px solid var(--terracotta);
+      padding: 20px 24px calc(24px + env(safe-area-inset-bottom));
+      z-index: 151; transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      max-width: 560px; margin: 0 auto;
+    }
+    .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
+    .bottom-sheet-handle {
+      width: 40px; height: 4px; border-radius: 2px;
+      background: var(--sand); margin: 0 auto 16px;
+    }
+    .bottom-sheet-close {
+      position: absolute; top: 16px; right: 20px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--sand); border: none; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary);
+    }
+
+    /* ─── Back to top ─── */
+    .back-to-top {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--forest); color: var(--cream);
+      border: 2px solid var(--terracotta);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 18px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 90; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(10px);
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .back-to-top:active { animation: bounce-tap 0.3s ease; }
+    @media (prefers-color-scheme: dark) {
+      .back-to-top { background: #1E4035; border-color: rgba(201,125,89,0.5); }
+      .bottom-sheet { background: #211C16; border-color: rgba(201,125,89,0.4); }
+      .bottom-sheet-close { background: #2D3E34; }
+      .bottom-sheet-handle { background: #2D3E34; }
+    }
+
+    /* ─── QR trigger button ─── */
+    .qr-trigger-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px;
+      background: var(--card-bg); border: var(--border-card);
+      border-radius: 14px; box-shadow: var(--shadow-hard);
+      font-family: var(--sans); font-size: 14px; font-weight: 700;
+      color: var(--text-primary); cursor: pointer;
+      margin: 14px 16px 0; max-width: calc(100% - 32px);
+      position: relative; overflow: hidden;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+    .qr-trigger-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-hard-lg); }
+    .qr-trigger-btn:active { animation: bounce-tap 0.3s ease; }
+    .qr-trigger-btn .ripple { position: absolute; border-radius: 50%; background: rgba(201,125,89,0.25); animation: ripple-out 0.5s ease-out forwards; pointer-events: none; }
+    @media (prefers-color-scheme: dark) {
+      .qr-trigger-btn { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+    }
+
+    /* ─── Dark mode overrides for neo-brut elements ─── */
+    @media (prefers-color-scheme: dark) {
+      .brand-header { background: linear-gradient(135deg, #16130F, #1A3D30); border-bottom: 2px solid rgba(201,125,89,0.3); }
+      .hero { border-color: rgba(201,125,89,0.4); box-shadow: 5px 5px 0 rgba(201,125,89,0.2); }
+      .hero-badge-nfc, .sitter-badge { background: #EFC98E; color: #16130F; border-color: rgba(201,125,89,0.5); box-shadow: 3px 3px 0 rgba(201,125,89,0.25); }
+      .section-icon.emergency, .section-icon.vet, .section-icon.medical,
+      .section-icon.qr, .section-icon.sitter, .section-icon.events { border-color: rgba(201,125,89,0.35); }
+      .section-icon.emergency, .section-icon.sitter { background: rgba(239,201,142,0.18); }
+      .section-icon.vet, .section-icon.qr { background: rgba(201,125,89,0.12); }
+      .section-icon.medical, .section-icon.events { background: rgba(58,140,92,0.15); }
+      .contact-card { background: rgba(201,125,89,0.06); border-color: rgba(201,125,89,0.25); }
+      .contact-avatar { background: var(--terracotta); }
+      .sitter-expires { background: rgba(239,201,142,0.12); border-color: rgba(201,125,89,0.35); color: #EFC98E; box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .call-btn { background: var(--terracotta); border-color: rgba(201,125,89,0.5); color: #fff; box-shadow: 4px 4px 0 rgba(201,125,89,0.25); }
+      .call-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.3); }
+      .vet-btn { background: #1E4035; border-color: rgba(201,125,89,0.35); box-shadow: 4px 4px 0 rgba(201,125,89,0.2); }
+      .vet-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.25); }
+      .vet-submit { border-color: rgba(201,125,89,0.4); box-shadow: 3px 3px 0 rgba(201,125,89,0.2); }
+      .vet-form input { border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .vet-form input:focus { border-color: var(--terracotta); }
+      .medical-badge { background: rgba(239,201,142,0.15); color: #EFC98E; border-color: rgba(201,125,89,0.35); box-shadow: 2px 2px 0 rgba(201,125,89,0.15); }
+      .portal-footer-badge { background: rgba(239,201,142,0.1); color: #EFC98E; border-color: rgba(201,125,89,0.3); box-shadow: 2px 2px 0 rgba(201,125,89,0.15); }
+      .portal-footer-logo { color: #EFC98E; }
+      .info-value a { color: #D4926A; }
+      .contact-phone a { color: #D4926A; }
+      .event-icon { border-color: rgba(239,201,142,0.5); }
+      .event-item::after { background: rgba(201,125,89,0.25); }
+      .brand-header.scrolled { background: rgba(13,31,24,0.88); border-bottom-color: rgba(201,125,89,0.4); }
+      .share-btn.primary { background: var(--terracotta); border-color: rgba(201,125,89,0.5); }
+      .share-btn.secondary { background: #1E4035; border-color: rgba(201,125,89,0.3); box-shadow: 3px 3px 0 rgba(201,125,89,0.15); }
+      .action-btn { border-color: rgba(201,125,89,0.3); box-shadow: 4px 4px 0 rgba(201,125,89,0.15); }
+      .action-btn:hover { box-shadow: 6px 6px 0 rgba(201,125,89,0.2); }
+      .geoloc-banner { border-color: rgba(201,125,89,0.3); box-shadow: 4px 4px 0 rgba(201,125,89,0.15); }
+      .lost-banner { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(139,32,32,0.4); }
+      .lost-message { background: rgba(217,79,79,0.08); border-color: rgba(217,79,79,0.35); }
+      .sticky-call a { border-color: #8B2020; box-shadow: 3px 3px 0 rgba(139,32,32,0.4); }
+      .pin-error { background: rgba(217,79,79,0.1); }
+    }
+    .event-item {
+      padding: 12px 0 12px 32px; border-bottom: 1px solid var(--border-subtle);
+      position: relative;
+    }
+    .event-icon {
+      position: absolute; left: 0; top: 12px;
+      width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; background: var(--card-bg); z-index: 1;
+      border-radius: 50%; border: 2px solid var(--butter);
+    }
+    .event-item::after {
+      content: ''; position: absolute; left: 10px; top: 36px;
+      width: 2px; bottom: 0; background: var(--sand);
+    }
+    .event-item:last-child { border-bottom: none; }
+    .event-item:last-child::after { display: none; }
+    .event-title { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .event-meta { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+    .event-notes { font-size: 13px; color: var(--text-hint); margin-top: 2px; font-style: italic; }
   </style>
 </head>
 <body>
+<div class="scroll-progress" id="scroll-progress"></div>
 <div class="container">
 
   <div id="loading-view" class="loading"><div class="spinner"></div></div>
@@ -400,14 +719,18 @@
     <div class="hero anim-in" id="hero">
       <div class="hero-skeleton" id="hero-skeleton"></div>
       <div class="hero-badge-nfc">NFC</div>
+      <div class="sitter-badge" id="sitter-badge">&#x1F3E0; PET-SITTER</div>
       <div class="hero-name-overlay">
         <div class="name" id="pet-name"></div>
         <div class="meta" id="pet-meta"></div>
       </div>
     </div>
 
+    <div class="stat-pills reveal" id="stat-pills" style="display:none"></div>
+    <div class="updated-at reveal" id="updated-at" style="display:none"></div>
+
     <!-- Action bar: share + call -->
-    <div class="action-bar anim-in anim-d1" id="action-bar">
+    <div class="action-bar reveal" id="action-bar">
       <button class="action-btn" id="share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
       <a class="action-btn" id="call-action-btn" style="display:none">&#x1F4DE; Appeler</a>
     </div>
@@ -422,7 +745,49 @@
       <button class="geoloc-dismiss" onclick="geolocDismiss()">Non merci</button>
     </div>
 
-    <div class="section anim-in anim-d1" id="emergency-section" style="display:none">
+    <div id="sitter-expires" class="sitter-expires" style="display:none"></div>
+
+    <div class="section reveal" id="feeding-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon sitter">&#x1F372;</div>
+        <div class="section-title">Repas</div>
+      </div>
+      <div class="sitter-section-content" id="feeding-content"></div>
+    </div>
+
+    <div class="section reveal" id="sitter-notes-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon sitter">&#x1F4DD;</div>
+        <div class="section-title">Consignes</div>
+      </div>
+      <div class="sitter-section-content" id="sitter-notes-content"></div>
+    </div>
+
+    <div class="section reveal" id="sitter-health-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon medical">&#x2695;&#xFE0F;</div>
+        <div class="section-title">Sant&eacute;</div>
+      </div>
+      <div id="sitter-health-rows"></div>
+    </div>
+
+    <div class="section reveal" id="sitter-events-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon events">&#x1F4C5;</div>
+        <div class="section-title">&Eacute;v&eacute;nements &agrave; venir</div>
+      </div>
+      <div id="sitter-events-list"></div>
+    </div>
+
+    <div class="section reveal" id="sitter-vet-section" style="display:none">
+      <div class="section-header">
+        <div class="section-icon vet">&#x1FA7A;</div>
+        <div class="section-title">V&eacute;t&eacute;rinaire</div>
+      </div>
+      <div id="sitter-vet-rows"></div>
+    </div>
+
+    <div class="section reveal" id="emergency-section" style="display:none">
       <div class="section-header">
         <div class="section-icon emergency">&#x1F4DE;</div>
         <div class="section-title" id="emergency-title">Contact d'urgence</div>
@@ -430,7 +795,7 @@
       <div id="emergency-contact-card"></div>
     </div>
 
-    <div class="section anim-in anim-d2" id="vet-section" style="display:none">
+    <div class="section reveal" id="vet-section" style="display:none">
       <div class="section-header">
         <div class="section-icon vet">&#x1FA7A;</div>
         <div class="section-title">Acc&egrave;s v&eacute;t&eacute;rinaire</div>
@@ -447,7 +812,7 @@
       </div>
     </div>
 
-    <div class="section anim-in anim-d3" id="medical-section" style="display:none">
+    <div class="section reveal" id="medical-section" style="display:none">
       <div class="section-header">
         <div class="section-icon medical">&#x2695;&#xFE0F;</div>
         <div class="section-title">Donn&eacute;es m&eacute;dicales</div>
@@ -456,22 +821,28 @@
       <div id="medical-rows"></div>
     </div>
 
-    <div class="section anim-in anim-d3" id="qr-section" style="display:none">
-      <div class="section-header">
-        <div class="section-icon qr">&#x1F517;</div>
-        <div class="section-title">Partager ce profil</div>
-      </div>
-      <div class="qr-inner">
-        <canvas id="qr-canvas"></canvas>
-        <div class="share-actions">
-          <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
-          <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+    <button class="qr-trigger-btn reveal" id="qr-trigger" style="display:none" onclick="openQRSheet()">&#x1F517; Voir le QR &amp; partager</button>
+
+    <!-- Bottom sheet QR -->
+    <div class="bottom-sheet-overlay" id="qr-sheet-overlay" onclick="closeQRSheet()">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="bottom-sheet-handle"></div>
+        <button class="bottom-sheet-close" onclick="closeQRSheet()">&times;</button>
+        <div style="text-align:center; margin-bottom: 12px;">
+          <span class="section-icon qr" style="display:inline-flex; margin-right:8px;">&#x1F517;</span>
+          <span style="font-family:var(--disp); font-size:16px; font-weight:700;">Partager ce profil</span>
         </div>
-        <div class="copy-feedback" id="copy-feedback">&#x2705; Lien copi&eacute; !</div>
+        <div class="qr-inner">
+          <canvas id="qr-canvas"></canvas>
+          <div class="share-actions">
+            <button class="share-btn primary" id="native-share-btn" onclick="nativeShare()" style="display:none">&#x1F4E4; Partager</button>
+            <button class="share-btn secondary" onclick="copyLink()">&#x1F4CB; Copier le lien</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="portal-footer anim-in anim-d4">
+    <div class="portal-footer reveal">
       <div class="portal-footer-logo">truffe<span class="dot"></span></div>
       <div class="portal-footer-sub">M&eacute;daillons NFC &middot; <a href="https://truffe.pro">truffe.pro</a></div>
       <div class="portal-footer-badge">Profil prot&eacute;g&eacute; par Truffe</div>
@@ -484,6 +855,8 @@
   </div>
 </div>
 
+<button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Retour en haut">&uarr;</button>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
 <script>
@@ -492,17 +865,32 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpZWpjcWNqaHNiaXJ2amd6ZXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzc2NDIsImV4cCI6MjA5NTY1MzY0Mn0.RUpYmL59VsgrulXwJqO82TOZg045Is67MT6R1fmVhAk';
   var TIMEOUT_MS = 10000;
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  var currentTagId = null, currentProfile = null;
+  var currentTagId = null, currentPetId = null, currentProfile = null, isSitterMode = false;
 
   function getTagId() {
     var hash = window.location.hash.replace('#', '');
-    if (hash) return decodeURIComponent(hash);
+    if (hash && hash.indexOf('pet=') !== 0) return decodeURIComponent(hash);
     var params = new URLSearchParams(window.location.search);
     if (params.get('tag')) return params.get('tag');
     var parts = window.location.pathname.split('/').filter(Boolean);
     var last = parts[parts.length - 1];
     if (last && last.startsWith('TRUFFE-')) return decodeURIComponent(last);
     return null;
+  }
+
+  // Profil public par id d’animal (page partageable sans médaillon NFC).
+  function getPetId() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('pet')) return params.get('pet');
+    var hash = window.location.hash.replace('#', '');
+    if (hash.indexOf('pet=') === 0) return decodeURIComponent(hash.slice(4));
+    return null;
+  }
+
+  // Mode pet-sitter : lien temporaire avec consignes.
+  function getSitterToken() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get('sitter') || null;
   }
 
   function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -532,11 +920,13 @@
 
   // ─── Geoloc: opt-in after profile loads ───
   function logScanWithoutGeo() {
+    if (!currentTagId) return; // pas de scan à logger en mode profil-par-id
     try { sb.rpc('log_nfc_scan', { p_nfc_tag_id: currentTagId, p_user_agent: navigator.userAgent }).then(function(){}); } catch(e) {}
   }
 
   window.geolocAccept = function() {
     hide('geoloc-banner');
+    if (!currentTagId) return; // le log de scan géolocalisé est réservé au médaillon NFC
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(function(pos) {
         try { sb.rpc('log_nfc_scan', {
@@ -559,28 +949,84 @@
     }
   };
 
+  // ─── Toast notification ───
+  function showToast(text) {
+    var existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(function() { t.classList.add('out'); }, 1800);
+    setTimeout(function() { t.remove(); }, 2200);
+  }
+
   // ─── Copy link ───
   window.copyLink = function() {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href).then(function() {
-        var fb = document.getElementById('copy-feedback');
-        fb.style.display = 'block';
-        setTimeout(function() { fb.style.display = 'none'; }, 2000);
-      });
+      navigator.clipboard.writeText(window.location.href).then(function() { showToast('✅ Lien copié !'); });
     } else {
       var ta = document.createElement('textarea');
       ta.value = window.location.href; document.body.appendChild(ta);
       ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      var fb = document.getElementById('copy-feedback');
-      fb.style.display = 'block';
-      setTimeout(function() { fb.style.display = 'none'; }, 2000);
+      showToast('✅ Lien copié !');
     }
   };
+
+  // ─── Bottom sheet QR ───
+  window.openQRSheet = function() {
+    document.getElementById('qr-sheet-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeQRSheet = function() {
+    document.getElementById('qr-sheet-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  // ─── Ripple effect ───
+  function addRipple(e) {
+    var btn = e.currentTarget;
+    var rect = btn.getBoundingClientRect();
+    var r = document.createElement('span');
+    r.className = 'ripple';
+    var size = Math.max(rect.width, rect.height);
+    r.style.width = r.style.height = size + 'px';
+    r.style.left = (e.clientX - rect.left - size/2) + 'px';
+    r.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(r);
+    setTimeout(function() { r.remove(); }, 600);
+  }
+
+  // ─── Calculate age ───
+  function calcAge(birthdate) {
+    if (!birthdate) return null;
+    var b = new Date(birthdate);
+    var now = new Date();
+    var months = (now.getFullYear() - b.getFullYear()) * 12 + (now.getMonth() - b.getMonth());
+    if (months < 12) return months + ' mois';
+    var years = Math.floor(months / 12);
+    return years + ' an' + (years > 1 ? 's' : '');
+  }
+
+  // ─── Time ago ───
+  function timeAgo(dateStr) {
+    if (!dateStr) return null;
+    var d = new Date(dateStr);
+    var now = new Date();
+    var diff = Math.floor((now - d) / 86400000);
+    if (diff === 0) return "Mis à jour aujourd'hui";
+    if (diff === 1) return 'Mis à jour hier';
+    return 'Mis à jour il y a ' + diff + ' jours';
+  }
 
   // ─── Render profile ───
   function renderProfile(p) {
     currentProfile = p;
     document.title = p.name + ' — Truffe';
+
+    // Badge "NFC" du hero : seulement si l'animal a réellement un médaillon
+    var nfcBadge = document.querySelector('.hero-badge-nfc');
+    if (nfcBadge && !currentTagId) nfcBadge.style.display = 'none';
 
     // JSON-LD
     var ld = document.createElement('script');
@@ -610,6 +1056,28 @@
     if (p.breed) metaParts.push(p.breed);
     if (p.color) metaParts.push(p.color);
     document.getElementById('pet-meta').textContent = metaParts.join(' · ');
+
+    // Stat pills
+    var pills = [];
+    var age = calcAge(p.birthdate);
+    if (age) pills.push({ value: age, label: 'Âge' });
+    if (p.weight_kg) pills.push({ value: p.weight_kg + ' kg', label: 'Poids' });
+    if (p.breed) pills.push({ value: p.breed, label: 'Race' });
+    if (pills.length > 0) {
+      var pillsHtml = '';
+      for (var pi = 0; pi < pills.length; pi++) {
+        pillsHtml += '<div class="stat-pill"><div class="stat-pill-value">' + esc(pills[pi].value) + '</div><div class="stat-pill-label">' + esc(pills[pi].label) + '</div></div>';
+      }
+      document.getElementById('stat-pills').innerHTML = pillsHtml;
+      show('stat-pills', 'flex');
+    }
+
+    // Updated at
+    var updatedText = timeAgo(p.updated_at);
+    if (updatedText) {
+      document.getElementById('updated-at').textContent = updatedText;
+      show('updated-at');
+    }
 
     // Action bar
     if (navigator.share) {
@@ -658,11 +1126,105 @@
       show('emergency-section');
     }
 
-    if (p.has_vet_pin) show('vet-section');
+    // Accès véto seulement si un médaillon existe (verify_vet_pin est keyé par tag)
+    if (p.has_vet_pin && currentTagId) show('vet-section');
 
     hide('loading-view');
     show('profile-view');
     generateQR();
+    initRevealObserver();
+    initScrollListeners();
+    initRipple();
+  }
+
+  // ─── Render sitter-specific sections ───
+  function renderSitterSections(p) {
+    // Sitter badge on hero
+    var sitterBadge = document.getElementById('sitter-badge');
+    if (sitterBadge) sitterBadge.style.display = 'flex';
+    var nfcBadge = document.querySelector('.hero-badge-nfc');
+    if (nfcBadge) nfcBadge.style.display = 'none';
+
+    // Expiration notice
+    if (p.expires_at) {
+      var exp = new Date(p.expires_at);
+      var now = new Date();
+      var diffH = Math.max(0, Math.round((exp - now) / 3600000));
+      var expText = diffH > 48
+        ? 'Accès valide encore ' + Math.round(diffH / 24) + ' jours'
+        : diffH > 0
+          ? 'Accès valide encore ' + diffH + 'h'
+          : 'Accès expiré';
+      document.getElementById('sitter-expires').textContent = expText;
+      show('sitter-expires');
+    }
+
+    // Feeding instructions
+    if (p.feeding_instructions) {
+      document.getElementById('feeding-content').textContent = p.feeding_instructions;
+      show('feeding-section');
+    }
+
+    // Sitter notes
+    if (p.sitter_notes) {
+      document.getElementById('sitter-notes-content').textContent = p.sitter_notes;
+      show('sitter-notes-section');
+    }
+
+    // Health badges
+    var badges = '';
+    if (p.medical_notes && p.medical_notes.toLowerCase().indexOf('vaccins à jour') !== -1) {
+      badges += '<span class="health-badge vaccins">✅ Vaccins à jour</span>';
+    }
+    if (p.allergies) {
+      badges += '<span class="health-badge allergies">⚠ Allergies</span>';
+    }
+
+    // Health info (allergies, medical_notes, weight, birthdate)
+    var healthRows = '';
+    if (badges) healthRows += '<div style="margin-bottom:12px">' + badges + '</div>';
+    healthRows += infoRow('Poids', p.weight_kg ? p.weight_kg + ' kg' : null);
+    healthRows += infoRow('Date de naissance', formatDate(p.birthdate));
+    healthRows += infoRow('Allergies', p.allergies);
+    healthRows += infoRow('Notes médicales', p.medical_notes);
+    if (healthRows) {
+      document.getElementById('sitter-health-rows').innerHTML = healthRows;
+      show('sitter-health-section');
+    }
+
+    // Vet info
+    if (p.vet_name || p.vet_phone) {
+      var vetRows = '';
+      vetRows += infoRow('Vétérinaire', p.vet_name);
+      vetRows += infoRow('Téléphone', p.vet_phone, true);
+      document.getElementById('sitter-vet-rows').innerHTML = vetRows;
+      show('sitter-vet-section');
+    }
+
+    // Upcoming events
+    var events = p.upcoming_events || [];
+    if (events.length > 0) {
+      var evHtml = '';
+      var eventTypeLabels = { vet_visit: 'Visite véto', medication: 'Médicament', grooming: 'Toilettage', other: 'Autre' };
+      var eventTypeIcons = { vet_visit: '💉', medication: '💊', grooming: '✂️', other: '📋' };
+      for (var i = 0; i < events.length; i++) {
+        var ev = events[i];
+        var icon = eventTypeIcons[ev.event_type] || eventTypeIcons.other;
+        evHtml += '<div class="event-item">';
+        evHtml += '<div class="event-icon">' + icon + '</div>';
+        evHtml += '<div class="event-title">' + esc(ev.title) + '</div>';
+        evHtml += '<div class="event-meta">' + esc(eventTypeLabels[ev.event_type] || ev.event_type) + ' · ' + (formatDate(ev.event_date) || '') + '</div>';
+        if (ev.notes) evHtml += '<div class="event-notes">' + esc(ev.notes) + '</div>';
+        evHtml += '</div>';
+      }
+      document.getElementById('sitter-events-list').innerHTML = evHtml;
+      show('sitter-events-section');
+    }
+
+    // Hide sections not relevant to sitter
+    hide('vet-section');
+    hide('geoloc-banner');
+    hide('qr-trigger');
   }
 
   function renderMedical(v) {
@@ -684,9 +1246,9 @@
     if (typeof QRCode === 'undefined') { setTimeout(generateQR, 200); return; }
     try {
       QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, {
-        width: 140, margin: 2, color: { dark: '#16130F', light: '#FFFFFF' }
+        width: 140, margin: 2, color: { dark: '#16130F', light: '#F2E9D6' }
       });
-      show('qr-section');
+      show('qr-trigger');
     } catch(e) {}
   }
 
@@ -710,12 +1272,17 @@
         document.getElementById('pin-error').classList.add('visible');
         document.getElementById('pin-input').disabled = true;
       } else if (res.data && !res.data.error) {
-        renderMedical(res.data);
+        document.getElementById('pin-input').classList.add('success');
+        setTimeout(function() { renderMedical(res.data); }, 400);
       } else {
         document.getElementById('pin-error').textContent = 'Code incorrect. Réessayez.';
         document.getElementById('pin-error').classList.add('visible');
-        document.getElementById('pin-input').value = '';
-        document.getElementById('pin-input').focus();
+        var pinInp = document.getElementById('pin-input');
+        pinInp.classList.add('shake');
+        document.getElementById('pin-error').classList.add('shake');
+        setTimeout(function() { pinInp.classList.remove('shake'); document.getElementById('pin-error').classList.remove('shake'); }, 500);
+        pinInp.value = '';
+        pinInp.focus();
       }
     } catch(e) {
       btn.classList.remove('loading'); btn.disabled = false;
@@ -727,14 +1294,115 @@
   var inp = document.getElementById('pin-input');
   if (inp) inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPin(); });
 
+  // ─── IntersectionObserver reveal ───
+  function initRevealObserver() {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: show all
+      for (var i = 0; i < els.length; i++) els[i].classList.add('visible');
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    for (var i = 0; i < els.length; i++) obs.observe(els[i]);
+  }
+
+  // ─── Scroll listeners (sticky header, progress bar, back-to-top) ───
+  function initScrollListeners() {
+    var header = document.querySelector('.brand-header');
+    var progress = document.getElementById('scroll-progress');
+    var btt = document.getElementById('back-to-top');
+    var ticking = false;
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          var scrollY = window.scrollY || window.pageYOffset;
+          var docH = document.documentElement.scrollHeight - window.innerHeight;
+          var pct = docH > 0 ? Math.min((scrollY / docH) * 100, 100) : 0;
+
+          // Scroll progress bar
+          progress.style.width = pct + '%';
+
+          // Sticky header shrink
+          if (scrollY > 60) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+
+          // Back to top
+          if (scrollY > 300) btt.classList.add('visible');
+          else btt.classList.remove('visible');
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+  }
+
+  // ─── Ripple on interactive buttons ───
+  function initRipple() {
+    var btns = document.querySelectorAll('.action-btn, .call-btn, .vet-btn, .vet-submit, .share-btn, .qr-trigger-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].style.position = 'relative';
+      btns[i].style.overflow = 'hidden';
+      btns[i].addEventListener('click', addRipple);
+    }
+  }
+
   // ─── Init ───
   async function init() {
+    var sitterToken = getSitterToken();
+    currentPetId = getPetId();
     currentTagId = getTagId();
-    if (!currentTagId) { hide('loading-view'); show('not-found-view'); return; }
+
+    // Mode pet-sitter : prioritaire sur les autres modes
+    if (sitterToken) {
+      isSitterMode = true;
+      try {
+        var sRes = await withTimeout(sb.rpc('get_sitter_profile', { p_token: sitterToken }), TIMEOUT_MS);
+        if (sRes.error || !sRes.data) {
+          hide('loading-view');
+          // Message d'erreur adapté
+          var nfEl = document.querySelector('#not-found-view h1');
+          if (nfEl) nfEl.textContent = 'Lien pet-sitter expiré';
+          var nfP = document.querySelector('#not-found-view p');
+          if (nfP) nfP.textContent = 'Ce lien n\'est plus valide. Demande un nouveau lien au propriétaire.';
+          show('not-found-view');
+          return;
+        }
+        renderProfile(sRes.data);
+        renderSitterSections(sRes.data);
+      } catch(e) {
+        hide('loading-view');
+        if (e.message === 'timeout') document.getElementById('error-message').textContent = 'Le chargement prend trop de temps.';
+        show('error-view');
+      }
+      return;
+    }
+
+    if (!currentPetId && !currentTagId) { hide('loading-view'); show('not-found-view'); return; }
     try {
-      logScanWithoutGeo();
-      var res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
-      if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
+      var res;
+      if (currentPetId) {
+        // Mode profil public par id (animal sans médaillon NFC)
+        res = await withTimeout(sb.rpc('get_public_pet_profile', { p_pet_id: currentPetId }), TIMEOUT_MS);
+        if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
+        // Si l'animal a aussi un médaillon, on l'active pour l'accès véto.
+        currentTagId = res.data.nfc_tag_id || null;
+      } else {
+        logScanWithoutGeo();
+        res = await withTimeout(sb.rpc('get_public_dog_profile', { p_nfc_tag_id: currentTagId }), TIMEOUT_MS);
+        if (res.error || !res.data) { hide('loading-view'); show('not-found-view'); return; }
+      }
       renderProfile(res.data);
     } catch(e) {
       hide('loading-view');
