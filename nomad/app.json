@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "NOMAD",
+    "slug": "nomad",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "nomad",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.nomad.idle"
+    },
+    "android": {
+      "package": "com.nomad.idle"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
