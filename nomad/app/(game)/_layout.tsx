@@ -40,6 +40,10 @@ export default function GameLayout() {
         options={{ title: 'Passeport', tabBarIcon: ({ color }) => <TabIcon emoji="🛂" color={color} /> }}
       />
       <Tabs.Screen
+        name="leaderboard"
+        options={{ title: 'Classement', tabBarIcon: ({ color }) => <TabIcon emoji="🏆" color={color} /> }}
+      />
+      <Tabs.Screen
         name="shop"
         options={{ title: 'Boutique', tabBarIcon: ({ color }) => <TabIcon emoji="💎" color={color} /> }}
       />

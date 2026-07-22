@@ -10,7 +10,8 @@ import { bulkCost, costOfLevel, jobCycleRevenue, maxAffordable } from '@/engine/
 import { applyTick, computeOfflineGain } from '@/engine/gameLoop';
 import { canTravel, milesFromTravel, travelTo } from '@/engine/prestige';
 import type { GameState, OfflineResult } from '@/engine/types';
-import { createInitialState, loadLocal, saveLocal } from '@/services/save';
+import { createInitialState, hasPendingSync, loadLocal, pullRemote, pushRemote, saveLocal } from '@/services/save';
+import { isSupabaseConfigured } from '@/services/supabase';
 
 export type BuyAmount = 1 | 10 | 100 | 'max';
 
@@ -19,9 +20,15 @@ interface GameStore {
   hydrated: boolean;
   /** Résultat offline en attente d'affichage (modal au retour). Null sinon. */
   pendingOffline: OfflineResult | null;
+  /** True si le cloud save Supabase est configuré. */
+  cloudEnabled: boolean;
+  /** True si une sync distante est en attente (échec réseau précédent). */
+  syncPending: boolean;
 
   hydrate: () => Promise<void>;
   persist: () => Promise<void>;
+  /** Pousse l'état + les stats leaderboard vers Supabase (no-op si non configuré). */
+  syncNow: () => Promise<void>;
 
   /** Tick passif : crédite le revenu automatisé + clôt les cycles manuels échus. */
   tick: (now: number) => void;
@@ -85,18 +92,32 @@ function settleManualCycles(state: GameState, country: Country, now: number): Ga
   return { ...state, jobs, money, earnedInCountry, totalEarned };
 }
 
+/** Stats dénormalisées pour le leaderboard : miles + nb de pays atteints. */
+function leaderboardStat(state: GameState) {
+  const order = getCountry(state.currentCountryId)?.order ?? 1;
+  return { totalMiles: state.miles, countriesUnlocked: order };
+}
+
 export const useGameStore = create<GameStore>((set, get) => ({
   state: createInitialState(Date.now()),
   hydrated: false,
   pendingOffline: null,
+  cloudEnabled: isSupabaseConfigured,
+  syncPending: false,
 
   hydrate: async () => {
     const now = Date.now();
-    const loaded = await loadLocal();
+    let loaded = await loadLocal();
+    // Nouvel appareil : pas de save locale mais un cloud save existe → restaurer.
+    if (!loaded && isSupabaseConfigured) {
+      loaded = await pullRemote();
+    }
     if (!loaded) {
       set({ state: createInitialState(now), hydrated: true, pendingOffline: null });
       return;
     }
+    const pending = await hasPendingSync();
+    set({ syncPending: pending });
     const country = currentCountry(loaded);
     const offline = computeOfflineGain(loaded, country, now, passiveBonusFromCollection(loaded.collection));
     const next: GameState = {
@@ -116,6 +137,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   persist: async () => {
     await saveLocal(get().state);
+  },
+
+  syncNow: async () => {
+    if (!isSupabaseConfigured) return;
+    const { state } = get();
+    const ok = await pushRemote(state, leaderboardStat(state));
+    set({ syncPending: !ok });
   },
 
   tick: (now) => {

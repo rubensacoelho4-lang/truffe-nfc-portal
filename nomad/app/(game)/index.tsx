@@ -26,6 +26,8 @@ export default function GameScreen() {
   const state = useGameStore((s) => s.state);
   const pendingOffline = useGameStore((s) => s.pendingOffline);
   const clearPendingOffline = useGameStore((s) => s.clearPendingOffline);
+  const cloudEnabled = useGameStore((s) => s.cloudEnabled);
+  const syncPending = useGameStore((s) => s.syncPending);
 
   const [buyAmount, setBuyAmount] = useState<BuyAmount>(1);
 
@@ -51,6 +53,11 @@ export default function GameScreen() {
         <View style={styles.countryRow}>
           <Text style={styles.flag}>{country.flag ?? '🌍'}</Text>
           <Text style={styles.countryName}>{country.name}</Text>
+          {cloudEnabled && syncPending ? (
+            <View style={styles.syncPill}>
+              <Text style={styles.syncText}>⏳ sync</Text>
+            </View>
+          ) : null}
           <View style={styles.milesPill}>
             <Text style={styles.milesText}>🧭 {formatMoney(state.miles)} miles</Text>
           </View>
@@ -131,6 +138,16 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   milesText: { color: COLORS.miles, fontSize: FONT_SIZE.caption, fontWeight: FONT_WEIGHT.semibold },
+  syncPill: {
+    backgroundColor: COLORS.card,
+    borderRadius: RADIUS.full,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginRight: SPACING.sm,
+  },
+  syncText: { color: COLORS.textMuted, fontSize: FONT_SIZE.xs },
   rps: { color: COLORS.success, fontSize: FONT_SIZE.body, fontWeight: FONT_WEIGHT.semibold, marginTop: 2 },
   buyToggle: { flexDirection: 'row', marginTop: SPACING.md, gap: SPACING.sm },
   buyChip: {
