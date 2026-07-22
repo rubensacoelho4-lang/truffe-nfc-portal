@@ -5,9 +5,18 @@
 import type { CollectibleDef } from '@/data/types';
 
 export const COLLECTIBLES: CollectibleDef[] = [
+  // France
   { id: 'baguette', name: 'Baguette', countryId: 'france', icon: '🥖', globalRevenueBonus: 0.02 },
   { id: 'tour_eiffel_photo', name: 'Photo Tour Eiffel', countryId: 'france', icon: '📸', globalRevenueBonus: 0.03 },
   { id: 'macaron', name: 'Macaron', countryId: 'france', icon: '🍬', globalRevenueBonus: 0.02 },
+  // Japon
+  { id: 'sakura', name: 'Fleur de sakura', countryId: 'japan', icon: '🌸', globalRevenueBonus: 0.03 },
+  { id: 'torii_photo', name: 'Photo du torii', countryId: 'japan', icon: '⛩️', globalRevenueBonus: 0.04 },
+  { id: 'maneki_neko', name: 'Maneki-neko', countryId: 'japan', icon: '🐱', globalRevenueBonus: 0.03 },
+  // Brésil
+  { id: 'caipirinha_verre', name: 'Verre de caipirinha', countryId: 'brazil', icon: '🍹', globalRevenueBonus: 0.04 },
+  { id: 'christ_redempteur_photo', name: 'Photo du Christ Rédempteur', countryId: 'brazil', icon: '📷', globalRevenueBonus: 0.05 },
+  { id: 'plume_carnaval', name: 'Plume de carnaval', countryId: 'brazil', icon: '🪶', globalRevenueBonus: 0.04 },
 ];
 
 const BY_ID: Record<string, CollectibleDef> = Object.fromEntries(

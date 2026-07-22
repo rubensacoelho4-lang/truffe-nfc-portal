@@ -1,0 +1,72 @@
+// data/countries/brazil.ts — pays 3 (order 3, dernier de la sortie). Mult ×16.
+// travelCost = objectif "endgame" de la sortie à 3 pays (pays 4 = post-lancement).
+
+import type { Country } from '@/data/types';
+
+export const BRAZIL: Country = {
+  id: 'brazil',
+  name: 'Brésil',
+  order: 3,
+  flag: '🇧🇷',
+  travelCost: 12_000_000_000,
+  travelBonusMultiplier: 16.0,
+  theme: { primary: '#009C3B', accent: '#FFDF00' },
+  jobs: [
+    {
+      id: 'caipirinha',
+      name: 'Vendeur de caipirinha',
+      icon: '🍹',
+      baseCost: 40,
+      baseRevenue: 9,
+      cycleTime: 1.0,
+      costGrowth: 1.07,
+      milestones: [25, 50, 100, 200, 300, 400],
+      managerCost: 10_000,
+    },
+    {
+      id: 'churrasco',
+      name: 'Maître churrasco',
+      icon: '🍖',
+      baseCost: 600,
+      baseRevenue: 72,
+      cycleTime: 3.0,
+      costGrowth: 1.08,
+      milestones: [25, 50, 100, 200, 300],
+      managerCost: 150_000,
+    },
+    {
+      id: 'capoeira',
+      name: 'Prof de capoeira',
+      icon: '🥋',
+      baseCost: 7_200,
+      baseRevenue: 420,
+      cycleTime: 6.0,
+      costGrowth: 1.09,
+      milestones: [25, 50, 100, 200],
+      managerCost: 1_000_000,
+    },
+    {
+      id: 'amazonie',
+      name: 'Guide en Amazonie',
+      icon: '🦜',
+      baseCost: 86_400,
+      baseRevenue: 2_340,
+      cycleTime: 12.0,
+      costGrowth: 1.10,
+      milestones: [25, 50, 100, 200],
+      managerCost: 5_000_000,
+    },
+    {
+      id: 'carnaval',
+      name: 'Organisateur de carnaval',
+      icon: '🎭',
+      baseCost: 1_036_000,
+      baseRevenue: 13_200,
+      cycleTime: 24.0,
+      costGrowth: 1.11,
+      milestones: [25, 50, 100, 200],
+      managerCost: 30_000_000,
+    },
+  ],
+  collectibles: ['caipirinha_verre', 'christ_redempteur_photo', 'plume_carnaval'],
+};

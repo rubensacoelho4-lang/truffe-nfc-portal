@@ -7,7 +7,7 @@ import { FIRST_COUNTRY } from '@/data/countries';
 import type { GameState } from '@/engine/types';
 
 const SAVE_KEY = 'nomad:save:v1';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 /** État de départ d'une nouvelle partie. */
 export function createInitialState(now: number): GameState {
@@ -21,9 +21,30 @@ export function createInitialState(now: number): GameState {
     currentCountryId: FIRST_COUNTRY.id,
     jobs: firstJob ? { [firstJob.id]: { level: 1, hasManager: false } } : {},
     collection: [],
+    stamps: [],
     earnedInCountry: 0,
     totalEarned: 0,
     lastSeen: now,
+    version: SAVE_VERSION,
+  };
+}
+
+/**
+ * Migration défensive d'un save partiel vers le schéma courant.
+ * Remplit les champs ajoutés au fil des versions (`?? []`, valeurs par défaut).
+ */
+function migrate(s: Partial<GameState>): GameState {
+  return {
+    money: s.money ?? 0,
+    gems: s.gems ?? 0,
+    miles: s.miles ?? 0,
+    currentCountryId: s.currentCountryId ?? FIRST_COUNTRY.id,
+    jobs: s.jobs ?? {},
+    collection: s.collection ?? [],
+    stamps: s.stamps ?? [],
+    earnedInCountry: s.earnedInCountry ?? 0,
+    totalEarned: s.totalEarned ?? 0,
+    lastSeen: s.lastSeen ?? Date.now(),
     version: SAVE_VERSION,
   };
 }
@@ -33,13 +54,13 @@ export async function loadLocal(): Promise<GameState | null> {
   try {
     const raw = await AsyncStorage.getItem(SAVE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as GameState;
-    // Garde défensif : un save d'une version inconnue est ignoré (repart à neuf).
+    const parsed = JSON.parse(raw) as Partial<GameState>;
+    // Garde défensif : un save corrompu est ignoré (repart à neuf).
     if (typeof parsed?.money !== 'number' || typeof parsed?.currentCountryId !== 'string') {
       console.warn('[Nomad] Save locale invalide, réinitialisation.');
       return null;
     }
-    return parsed;
+    return migrate(parsed);
   } catch (e) {
     console.warn('[Nomad] Échec du chargement local', e);
     return null;

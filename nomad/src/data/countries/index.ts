@@ -3,9 +3,12 @@
 
 import type { Country } from '@/data/types';
 import { FRANCE } from './france';
+import { JAPAN } from './japan';
+import { BRAZIL } from './brazil';
 
 // Trié par `order` pour garantir la séquence de voyage.
-export const COUNTRIES: Country[] = [FRANCE].sort((a, b) => a.order - b.order);
+// Ajouter un pays = importer son fichier et l'ajouter ici. Rien d'autre.
+export const COUNTRIES: Country[] = [FRANCE, JAPAN, BRAZIL].sort((a, b) => a.order - b.order);
 
 const BY_ID: Record<string, Country> = Object.fromEntries(
   COUNTRIES.map((c) => [c.id, c]),

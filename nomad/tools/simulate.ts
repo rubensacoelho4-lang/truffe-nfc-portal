@@ -15,7 +15,7 @@ import {
   jobRevenuePerSecond,
   maxAffordable,
 } from '../src/engine/economy';
-import { FRANCE } from '../src/data/countries/france';
+import { COUNTRIES } from '../src/data/countries';
 
 interface SimJob {
   def: JobDef;
@@ -150,32 +150,32 @@ function simulate(country: Country) {
 }
 
 function main() {
-  const country = FRANCE;
-  console.log(`\n=== Simulation d'économie : ${country.name} ===`);
-  console.log(`Objectif de voyage : ${fmt(country.travelCost)}€\n`);
+  console.log('\n════════ Simulation d\'économie NOMAD (jeu idle optimal) ════════');
+  let cumulative = 0;
 
-  const { milestones, travelAt, jobs } = simulate(country);
+  for (const country of COUNTRIES) {
+    console.log(`\n=== ${country.flag ?? ''} ${country.name}  (mult ×${country.travelBonusMultiplier}) ===`);
+    console.log(`Objectif de voyage : ${fmt(country.travelCost)}€`);
 
-  console.log('Jalons :');
-  for (const m of milestones) {
-    console.log(`  ${REPORT(m.atSeconds).padEnd(12)} ${m.label.padEnd(34)} money=${fmt(m.money)}`);
-  }
+    const { milestones, travelAt, jobs } = simulate(country);
 
-  console.log('\nÉtat final des boulots :');
-  for (const j of jobs) {
-    console.log(
-      `  ${(j.def.icon ?? '·')} ${j.def.name.padEnd(24)} niv=${String(j.level).padStart(4)}  ${j.manager ? 'auto' : 'manuel'}`,
-    );
-  }
+    for (const m of milestones) {
+      console.log(`  ${REPORT(m.atSeconds).padEnd(12)} ${m.label.padEnd(34)} money=${fmt(m.money)}`);
+    }
 
-  if (travelAt < 0) {
-    console.log(`\n⚠️  Voyage NON atteint en ${REPORT(HORIZON_SECONDS)} → économie trop lente, à retuner.`);
-  } else {
-    console.log(`\n✅ Premier voyage atteignable en ~${REPORT(travelAt)} de jeu idle optimal.`);
-    if (travelAt > 60 * 60 * 30) {
-      console.log('   (⚠️ > 30h : peut-être trop long pour un pays 1 — baisser travelCost ou costGrowth.)');
+    const finalLevels = jobs.map((j) => `${j.def.icon ?? '·'}${j.level}`).join('  ');
+    console.log(`  boulots: ${finalLevels}`);
+
+    if (travelAt < 0) {
+      console.log(`  ⚠️  Voyage NON atteint en ${REPORT(HORIZON_SECONDS)} → à retuner.`);
+    } else {
+      cumulative += travelAt;
+      console.log(`  ✅ Voyage en ~${REPORT(travelAt)}  (cumul ~${REPORT(cumulative)})`);
     }
   }
+
+  console.log(`\n📊 Parcours complet des ${COUNTRIES.length} pays en ~${REPORT(cumulative)} de jeu optimal.`);
+  console.log('   (Le jeu idle réel est plus lent : ce chiffre est une borne "actif optimal".)\n');
 }
 
 main();

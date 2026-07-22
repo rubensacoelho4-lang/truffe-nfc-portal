@@ -1,10 +1,11 @@
 // (game)/index.tsx — écran principal : pays courant + boulots.
-// Le "GATE de fun" de la Phase 1 se joue ici.
+// Le "GATE de fun" de la Phase 1 se joue ici. Le voyage a son propre onglet.
 
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getCountry, nextCountry } from '@/data/countries';
+import { getCountry } from '@/data/countries';
 import { passiveBonusFromCollection } from '@/data/collectibles';
 import { globalMultiplier, revenuePerSecond } from '@/engine/gameLoop';
 import { canTravel } from '@/engine/prestige';
@@ -12,7 +13,7 @@ import { JobCard } from '@/components/JobCard';
 import { MoneyCounter } from '@/components/MoneyCounter';
 import { OfflineModal } from '@/components/OfflineModal';
 import { formatMoney } from '@/lib/format';
-import { selectionTick, celebrate } from '@/lib/haptics';
+import { selectionTick } from '@/lib/haptics';
 import { useGameStore, type BuyAmount } from '@/store/gameStore';
 import { COLORS, FONT_SIZE, FONT_WEIGHT, RADIUS, SPACING } from '@/theme/theme';
 
@@ -20,30 +21,20 @@ const BUY_AMOUNTS: BuyAmount[] = [1, 10, 100, 'max'];
 
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const hydrated = useGameStore((s) => s.hydrated);
   const state = useGameStore((s) => s.state);
   const pendingOffline = useGameStore((s) => s.pendingOffline);
   const clearPendingOffline = useGameStore((s) => s.clearPendingOffline);
-  const travel = useGameStore((s) => s.travel);
 
   const [buyAmount, setBuyAmount] = useState<BuyAmount>(1);
 
   const country = getCountry(state.currentCountryId) ?? getCountry('france')!;
   const bonus = passiveBonusFromCollection(state.collection);
   const mult = globalMultiplier(country, bonus);
-  const rps = useMemo(
-    () => revenuePerSecond(state, country, bonus),
-    [state, country, bonus],
-  );
+  const rps = useMemo(() => revenuePerSecond(state, country, bonus), [state, country, bonus]);
   const travelReady = canTravel(state, country);
-  const hasNext = nextCountry(country.id) != null;
   const travelPct = Math.min(1, state.money / country.travelCost);
-
-  const onTravel = () => {
-    if (!travelReady || !hasNext) return;
-    void celebrate();
-    travel();
-  };
 
   if (!hydrated) {
     return (
@@ -66,7 +57,7 @@ export default function GameScreen() {
         </View>
 
         <MoneyCounter value={state.money} prefix="€" />
-        <Text style={styles.rps}>+{formatMoney(rps)}/s</Text>
+        <Text style={styles.rps}>+{formatMoney(rps)}/s{bonus > 0 ? `  ·  collection +${Math.round(bonus * 100)}%` : ''}</Text>
 
         <View style={styles.buyToggle}>
           {BUY_AMOUNTS.map((amt) => {
@@ -87,38 +78,30 @@ export default function GameScreen() {
             );
           })}
         </View>
+
+        {/* Progression vers le voyage → tape pour aller à l'onglet Voyage */}
+        <Pressable style={styles.voyageHint} onPress={() => router.navigate('/travel')}>
+          <View style={styles.voyageTrack}>
+            <View style={[styles.voyageFill, { width: `${travelPct * 100}%` }]} />
+          </View>
+          <Text style={[styles.voyageLabel, travelReady && styles.voyageReady]}>
+            {travelReady
+              ? '✈️ Prêt à voyager — appuie ici'
+              : `Voyage à ${formatMoney(country.travelCost)} · ${Math.floor(travelPct * 100)}%`}
+          </Text>
+        </Pressable>
       </View>
 
       {/* ————— Boulots ————— */}
       <ScrollView
         style={styles.list}
-        contentContainerStyle={{ padding: SPACING.md, paddingBottom: 140 + insets.bottom }}
+        contentContainerStyle={{ padding: SPACING.md, paddingBottom: SPACING.xxl }}
         showsVerticalScrollIndicator={false}
       >
         {country.jobs.map((job) => (
           <JobCard key={job.id} job={job} buyAmount={buyAmount} globalMult={mult} />
         ))}
       </ScrollView>
-
-      {/* ————— Barre de voyage (prestige) ————— */}
-      <View style={[styles.travelBar, { paddingBottom: insets.bottom + SPACING.md }]}>
-        <View style={styles.travelTrack}>
-          <View style={[styles.travelFill, { width: `${travelPct * 100}%` }]} />
-        </View>
-        <Pressable
-          onPress={onTravel}
-          disabled={!travelReady || !hasNext}
-          style={[styles.travelBtn, travelReady && hasNext ? styles.travelOn : styles.travelOff]}
-        >
-          <Text style={styles.travelLabel}>
-            {!hasNext
-              ? `Prochain pays bientôt · ${formatMoney(state.money)} / ${formatMoney(country.travelCost)}`
-              : travelReady
-                ? '✈️ Voyager vers le pays suivant'
-                : `Voyage à ${formatMoney(country.travelCost)} · ${Math.floor(travelPct * 100)}%`}
-          </Text>
-        </Pressable>
-      </View>
 
       <OfflineModal result={pendingOffline} onClose={clearPendingOffline} />
     </View>
@@ -162,28 +145,16 @@ const styles = StyleSheet.create({
   buyChipActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   buyChipText: { color: COLORS.textMuted, fontSize: FONT_SIZE.caption, fontWeight: FONT_WEIGHT.bold },
   buyChipTextActive: { color: '#fff' },
-  list: { flex: 1 },
-  travelBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
-    backgroundColor: COLORS.bgElevated,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  travelTrack: {
-    height: 8,
+  voyageHint: { marginTop: SPACING.md },
+  voyageTrack: {
+    height: 6,
     borderRadius: RADIUS.full,
     backgroundColor: COLORS.progressTrack,
     overflow: 'hidden',
-    marginBottom: SPACING.md,
+    marginBottom: 4,
   },
-  travelFill: { height: '100%', backgroundColor: COLORS.miles },
-  travelBtn: { borderRadius: RADIUS.full, paddingVertical: SPACING.md, alignItems: 'center' },
-  travelOn: { backgroundColor: COLORS.accent },
-  travelOff: { backgroundColor: COLORS.card, borderWidth: 1, borderColor: COLORS.border },
-  travelLabel: { color: COLORS.text, fontSize: FONT_SIZE.body, fontWeight: FONT_WEIGHT.bold },
+  voyageFill: { height: '100%', backgroundColor: COLORS.miles },
+  voyageLabel: { color: COLORS.textMuted, fontSize: FONT_SIZE.xs, fontWeight: FONT_WEIGHT.medium },
+  voyageReady: { color: COLORS.accent, fontWeight: FONT_WEIGHT.bold },
+  list: { flex: 1 },
 });

@@ -27,6 +27,8 @@ export interface GameState {
   jobs: Record<string, JobRuntime>;
   /** Ids de collectibles obtenus (méta-progression, ne reset jamais au voyage). */
   collection: string[];
+  /** Ids des pays dont on a obtenu le tampon (passeport). Ne reset jamais. */
+  stamps: string[];
   /** Total d'argent gagné dans le pays courant (base du calcul des miles au voyage). */
   earnedInCountry: number;
   /** Total d'argent gagné sur toute la partie (stats / leaderboard). */

@@ -206,8 +206,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const country = currentCountry(state);
     if (!canTravel(state, country)) return;
     const next = nextCountry(country.id);
-    if (!next) return; // dernier pays débloqué (Phase 1 : France seule).
-    set({ state: travelTo(state, next, Date.now()) });
+    if (!next) return; // dernier pays débloqué disponible.
+    set({ state: travelTo(state, country, next, Date.now()) });
   },
 
   clearPendingOffline: () => set({ pendingOffline: null }),
