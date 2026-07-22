@@ -67,8 +67,8 @@ produire les assets des autres. Les GATES de fun (§5.2 spec) ne se sautent pas.
 
 ## Phases
 
-1. **Fondation** — engine + data(France) + UI principale → jouable local. ← *ici*
-2. Progression — prestige + Japon/Brésil + passeport.
-3. Persistance — Supabase + save/sync + auth.
-4. Monétisation — AdMob rewarded + RevenueCat IAP.
-5. Polish & ship — haptics, entrées d'écran, audit, EAS build.
+1. ✅ **Fondation** — engine + data(France) + UI principale → jouable local.
+2. ✅ Progression — prestige + Japon/Brésil + passeport.
+3. ✅ Persistance — Supabase + save/sync + auth (dégrade en local si non configuré).
+4. ✅ Monétisation — pubs récompensées + IAP (mock dev, swap SDK natif documenté).
+5. ⏳ Polish & ship — haptics, entrées d'écran, audit, **test device**, EAS build. ← *ici*

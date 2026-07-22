@@ -2,9 +2,10 @@
 // Le "GATE de fun" de la Phase 1 se joue ici. Le voyage a son propre onglet.
 
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useScreenEntrance } from '@/lib/useScreenEntrance';
 import { getCountry } from '@/data/countries';
 import { passiveBonusFromCollection } from '@/data/collectibles';
 import { activeBoostFactor, globalMultiplier, revenuePerSecond } from '@/engine/gameLoop';
@@ -22,6 +23,7 @@ const BUY_AMOUNTS: BuyAmount[] = [1, 10, 100, 'max'];
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const entrance = useScreenEntrance();
   const hydrated = useGameStore((s) => s.hydrated);
   const state = useGameStore((s) => s.state);
   const pendingOffline = useGameStore((s) => s.pendingOffline);
@@ -50,7 +52,7 @@ export default function GameScreen() {
   return (
     <View style={styles.root}>
       {/* ————— Header ————— */}
-      <View style={[styles.header, { paddingTop: insets.top + SPACING.sm }]}>
+      <Animated.View style={[styles.header, { paddingTop: insets.top + SPACING.sm }, entrance]}>
         <View style={styles.countryRow}>
           <Text style={styles.flag}>{country.flag ?? '🌍'}</Text>
           <Text style={styles.countryName}>{country.name}</Text>
@@ -102,7 +104,7 @@ export default function GameScreen() {
               : `Voyage à ${formatMoney(country.travelCost)} · ${Math.floor(travelPct * 100)}%`}
           </Text>
         </Pressable>
-      </View>
+      </Animated.View>
 
       {/* ————— Boulots ————— */}
       <ScrollView
