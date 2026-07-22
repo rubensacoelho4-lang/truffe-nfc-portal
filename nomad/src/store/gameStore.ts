@@ -7,7 +7,7 @@ import { getCountry, nextCountry } from '@/data/countries';
 import { passiveBonusFromCollection } from '@/data/collectibles';
 import type { Country } from '@/data/types';
 import { bulkCost, costOfLevel, jobCycleRevenue, maxAffordable } from '@/engine/economy';
-import { applyTick, computeOfflineGain } from '@/engine/gameLoop';
+import { activeBoostFactor, applyTick, computeOfflineGain } from '@/engine/gameLoop';
 import { canTravel, milesFromTravel, travelTo } from '@/engine/prestige';
 import type { GameState, OfflineResult } from '@/engine/types';
 import { createInitialState, hasPendingSync, loadLocal, pullRemote, pushRemote, saveLocal } from '@/services/save';
@@ -43,6 +43,18 @@ interface GameStore {
   buyManager: (jobId: string) => void;
   travel: () => void;
 
+  // ————— Monétisation (Phase 4) —————
+  /** Crédite des gemmes (récompense pub, IAP, milestone). */
+  addGems: (n: number) => void;
+  /** Dépense des gemmes si possible ; retourne true si l'achat a eu lieu. */
+  spendGems: (n: number) => boolean;
+  /** Active un boost temporaire (×factor pendant durationSec). */
+  activateBoost: (factor: number, durationSec: number) => void;
+  /** Crédite une seconde fois le gain offline en attente (récompense pub). */
+  doublePendingOffline: () => void;
+  /** Marque l'entitlement "sans pub" (IAP non-consommable). */
+  setNoAds: () => void;
+
   clearPendingOffline: () => void;
   reset: (now: number) => void;
 }
@@ -68,7 +80,7 @@ function currentCountry(state: GameState): Country {
  * Retourne l'état modifié (nouvel objet) + le total crédité.
  */
 function settleManualCycles(state: GameState, country: Country, now: number): GameState {
-  const mult = country.travelBonusMultiplier * (1 + passiveBonus(state));
+  const mult = country.travelBonusMultiplier * (1 + passiveBonus(state)) * activeBoostFactor(state, now);
   let money = state.money;
   let earnedInCountry = state.earnedInCountry;
   let totalEarned = state.totalEarned;
@@ -152,7 +164,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 1) clôturer les cycles manuels échus, 2) créditer le passif automatisé.
     const settled = settleManualCycles(state, country, now);
     const deltaSec = Math.max(0, (now - settled.lastSeen) / 1000);
-    const ticked = applyTick(settled, country, deltaSec, now, passiveBonus(settled), 1);
+    const boost = activeBoostFactor(settled, now);
+    const ticked = applyTick(settled, country, deltaSec, now, passiveBonus(settled), 1, boost);
     set({ state: ticked });
   },
 
@@ -201,13 +214,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
+    // Récompense en gemmes pour chaque palier franchi par cet achat.
+    const newLevel = rt.level + count;
+    const crossed = job.milestones.filter((m) => m > rt.level && m <= newLevel).length;
+    const gemReward = crossed * 5;
+
     set({
       state: {
         ...state,
         money: state.money - cost,
+        gems: state.gems + gemReward,
         jobs: {
           ...state.jobs,
-          [jobId]: { ...rt, level: rt.level + count },
+          [jobId]: { ...rt, level: newLevel },
         },
       },
     });
@@ -236,6 +255,49 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const next = nextCountry(country.id);
     if (!next) return; // dernier pays débloqué disponible.
     set({ state: travelTo(state, country, next, Date.now()) });
+  },
+
+  addGems: (n) => {
+    if (n <= 0) return;
+    const { state } = get();
+    set({ state: { ...state, gems: state.gems + n } });
+  },
+
+  spendGems: (n) => {
+    const { state } = get();
+    if (n <= 0 || state.gems < n) return false;
+    set({ state: { ...state, gems: state.gems - n } });
+    return true;
+  },
+
+  activateBoost: (factor, durationSec) => {
+    const { state } = get();
+    const now = Date.now();
+    // Si un boost identique court déjà, on prolonge ; sinon on remplace.
+    const base = state.boostFactor === factor && state.boostUntil && state.boostUntil > now
+      ? state.boostUntil
+      : now;
+    set({ state: { ...state, boostFactor: factor, boostUntil: base + durationSec * 1000 } });
+  },
+
+  doublePendingOffline: () => {
+    const { state, pendingOffline } = get();
+    if (!pendingOffline || pendingOffline.gain <= 0) return;
+    const extra = pendingOffline.gain;
+    set({
+      state: {
+        ...state,
+        money: state.money + extra,
+        earnedInCountry: state.earnedInCountry + extra,
+        totalEarned: state.totalEarned + extra,
+      },
+      pendingOffline: null,
+    });
+  },
+
+  setNoAds: () => {
+    const { state } = get();
+    set({ state: { ...state, noAds: true } });
   },
 
   clearPendingOffline: () => set({ pendingOffline: null }),

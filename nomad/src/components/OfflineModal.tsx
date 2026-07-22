@@ -1,12 +1,14 @@
 // OfflineModal.tsx — "pendant ton absence, tes managers ont bossé".
-// Levier de rétention + accroche monétisation (doubler via pub = Phase 4).
+// Levier de rétention + monétisation : doubler le gain via pub récompensée.
 // Entrée d'écran : spring scale + fade (Animated, useNativeDriver:true).
 
-import React, { useEffect, useRef } from 'react';
-import { Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { formatDuration, formatMoney } from '@/lib/format';
-import { notifySuccess } from '@/lib/haptics';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { showRewardedAd } from '@/services/ads';
 import type { OfflineResult } from '@/engine/types';
+import { formatDuration, formatMoney } from '@/lib/format';
+import { notifySuccess, tapMedium } from '@/lib/haptics';
+import { useGameStore } from '@/store/gameStore';
 import { COLORS, FONT_SIZE, FONT_WEIGHT, RADIUS, SPACING } from '@/theme/theme';
 
 interface Props {
@@ -17,6 +19,10 @@ interface Props {
 export function OfflineModal({ result, onClose }: Props) {
   const scale = useRef(new Animated.Value(0.7)).current;
   const fade = useRef(new Animated.Value(0)).current;
+  const [doubling, setDoubling] = useState(false);
+
+  const doublePendingOffline = useGameStore((s) => s.doublePendingOffline);
+  const noAds = useGameStore((s) => s.state.noAds);
 
   useEffect(() => {
     if (!result) return;
@@ -28,6 +34,18 @@ export function OfflineModal({ result, onClose }: Props) {
       Animated.timing(fade, { toValue: 1, duration: 300, useNativeDriver: true }),
     ]).start();
   }, [result, scale, fade]);
+
+  const onDouble = async () => {
+    if (doubling) return;
+    setDoubling(true);
+    tapMedium();
+    // "Sans pub" acheté → double directement ; sinon, pub récompensée.
+    const rewarded = noAds ? true : await showRewardedAd('double_offline');
+    setDoubling(false);
+    if (rewarded) {
+      doublePendingOffline(); // crédite l'extra + ferme (pendingOffline → null)
+    }
+  };
 
   if (!result) return null;
 
@@ -41,11 +59,18 @@ export function OfflineModal({ result, onClose }: Props) {
             {result.capped ? ' (plafond atteint)' : ''}.
           </Text>
           <Text style={styles.amount}>+{formatMoney(result.gain)}</Text>
-          <Pressable style={styles.cta} onPress={onClose}>
+
+          <Pressable style={styles.double} onPress={onDouble} disabled={doubling}>
+            {doubling ? (
+              <ActivityIndicator color={COLORS.bg} />
+            ) : (
+              <Text style={styles.doubleText}>{noAds ? '×2 Doubler' : '▶️ Doubler (pub)'}</Text>
+            )}
+          </Pressable>
+
+          <Pressable style={styles.cta} onPress={onClose} disabled={doubling}>
             <Text style={styles.ctaText}>Encaisser</Text>
           </Pressable>
-          {/* Phase 4 : bouton "Doubler (pub)" viendra ici. */}
-          <Text style={styles.hint}>Bientôt : regarde une pub pour doubler.</Text>
         </Animated.View>
       </View>
     </Modal>
@@ -73,6 +98,17 @@ const styles = StyleSheet.create({
   title: { color: COLORS.text, fontSize: FONT_SIZE.headline, fontWeight: FONT_WEIGHT.heavy },
   sub: { color: COLORS.textMuted, fontSize: FONT_SIZE.body, textAlign: 'center', marginTop: SPACING.sm },
   amount: { color: COLORS.money, fontSize: FONT_SIZE.display, fontWeight: FONT_WEIGHT.heavy, marginVertical: SPACING.lg },
+  double: {
+    backgroundColor: COLORS.accent,
+    borderRadius: RADIUS.full,
+    paddingVertical: SPACING.md,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
+    minHeight: 48,
+    justifyContent: 'center',
+  },
+  doubleText: { color: COLORS.bg, fontSize: FONT_SIZE.subtitle, fontWeight: FONT_WEIGHT.heavy },
   cta: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.full,
@@ -82,5 +118,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaText: { color: '#fff', fontSize: FONT_SIZE.subtitle, fontWeight: FONT_WEIGHT.bold },
-  hint: { color: COLORS.textFaint, fontSize: FONT_SIZE.xs, marginTop: SPACING.md },
 });

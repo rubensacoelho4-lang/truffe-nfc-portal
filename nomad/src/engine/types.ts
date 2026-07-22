@@ -35,6 +35,12 @@ export interface GameState {
   totalEarned: number;
   /** Dernier instant (ms) où l'état a été mis à jour (base du calcul offline). */
   lastSeen: number;
+  /** Fin (ms) du boost temporaire actif, ou undefined si aucun. */
+  boostUntil?: number;
+  /** Facteur du boost temporaire (ex. 2 = ×2 revenus) tant que boostUntil > now. */
+  boostFactor?: number;
+  /** Entitlement "sans pub" (IAP non-consommable). */
+  noAds?: boolean;
   /** Version du schéma de save, pour les migrations futures. */
   version: number;
 }

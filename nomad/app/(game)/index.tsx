@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getCountry } from '@/data/countries';
 import { passiveBonusFromCollection } from '@/data/collectibles';
-import { globalMultiplier, revenuePerSecond } from '@/engine/gameLoop';
+import { activeBoostFactor, globalMultiplier, revenuePerSecond } from '@/engine/gameLoop';
 import { canTravel } from '@/engine/prestige';
 import { JobCard } from '@/components/JobCard';
 import { MoneyCounter } from '@/components/MoneyCounter';
@@ -33,8 +33,9 @@ export default function GameScreen() {
 
   const country = getCountry(state.currentCountryId) ?? getCountry('france')!;
   const bonus = passiveBonusFromCollection(state.collection);
-  const mult = globalMultiplier(country, bonus);
-  const rps = useMemo(() => revenuePerSecond(state, country, bonus), [state, country, bonus]);
+  const boost = activeBoostFactor(state, Date.now());
+  const mult = globalMultiplier(country, bonus, boost);
+  const rps = useMemo(() => revenuePerSecond(state, country, bonus, boost), [state, country, bonus, boost]);
   const travelReady = canTravel(state, country);
   const travelPct = Math.min(1, state.money / country.travelCost);
 
@@ -64,7 +65,11 @@ export default function GameScreen() {
         </View>
 
         <MoneyCounter value={state.money} prefix="€" />
-        <Text style={styles.rps}>+{formatMoney(rps)}/s{bonus > 0 ? `  ·  collection +${Math.round(bonus * 100)}%` : ''}</Text>
+        <Text style={styles.rps}>
+          +{formatMoney(rps)}/s
+          {bonus > 0 ? `  ·  collection +${Math.round(bonus * 100)}%` : ''}
+          {boost > 1 ? `  ·  ⚡×${boost}` : ''}
+        </Text>
 
         <View style={styles.buyToggle}>
           {BUY_AMOUNTS.map((amt) => {

@@ -14,12 +14,21 @@ export const OFFLINE_RATE = 0.5;
 /** Plafond de temps offline crédité, en secondes (4h). Extensible par pub/IAP. */
 export const OFFLINE_CAP_SECONDS = 4 * 60 * 60;
 
+/** Facteur du boost temporaire actif (2, 3…), ou 1 s'il est expiré/absent. */
+export function activeBoostFactor(state: GameState, now: number): number {
+  if (state.boostUntil && state.boostFactor && now < state.boostUntil) {
+    return state.boostFactor;
+  }
+  return 1;
+}
+
 /**
- * Multiplicateur global de revenu = travelBonus du pays × bonus passifs.
+ * Multiplicateur global de revenu = travelBonus du pays × bonus passifs × boost.
  * `passiveBonus` regroupe les bonus de collection etc. (0.05 = +5%).
+ * `boost` = multiplicateur temporaire (pub/boost), 1 si aucun.
  */
-export function globalMultiplier(country: Country, passiveBonus = 0): number {
-  return country.travelBonusMultiplier * (1 + passiveBonus);
+export function globalMultiplier(country: Country, passiveBonus = 0, boost = 1): number {
+  return country.travelBonusMultiplier * (1 + passiveBonus) * boost;
 }
 
 /**
@@ -29,6 +38,7 @@ export function revenuePerSecond(
   state: GameState,
   country: Country,
   passiveBonus = 0,
+  boost = 1,
 ): number {
   const levels: Record<string, number> = {};
   const managers: Record<string, boolean> = {};
@@ -41,7 +51,7 @@ export function revenuePerSecond(
     country.jobs,
     levels,
     managers,
-    globalMultiplier(country, passiveBonus),
+    globalMultiplier(country, passiveBonus, boost),
   );
 }
 
@@ -57,9 +67,10 @@ export function applyTick(
   now: number,
   passiveBonus = 0,
   rate = 1,
+  boost = 1,
 ): GameState {
   if (deltaSeconds <= 0) return { ...state, lastSeen: now };
-  const rps = revenuePerSecond(state, country, passiveBonus);
+  const rps = revenuePerSecond(state, country, passiveBonus, boost);
   const gain = rps * deltaSeconds * rate;
   return {
     ...state,
